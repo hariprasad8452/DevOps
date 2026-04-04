@@ -36,8 +36,7 @@
 # 3. NEVER RESET --HARD ON SHARED CODE: If others have your code, use 'revert' instead.
 # 4. READ THE TERMINAL: Git usually tells you exactly how to fix the problem in the error message.
 
-print("Hello, Harry")
-print("Hello, Git!")
+print("Hello, Git! This is Harry")
 print("This is my very first commit.")
 print("I am practicing the version control workflow.")
 print("Now I am adding remote push commands to my cheat sheet.")
