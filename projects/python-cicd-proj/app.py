@@ -1,5 +1,5 @@
 from utils import analyze_sales_data
-
+#function
 def main():
     # Simulated real-world data (daily sales)
     sales_data = [120, 340, 560, 230, 450, 390, 610]
