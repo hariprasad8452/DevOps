@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hari Prasad Putta | DevOps Engineer</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script src="https://unpkg.com/feather-icons"></script>
+    <script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vanta@latest/dist/vanta.net.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        body {
+            font-family: 'Inter', sans-serif;
+            scroll-behavior: smooth;
+        }
+        .skill-tag {
+            transition: all 0.3s ease;
+        }
+        .skill-tag:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+        .project-card {
+            transition: all 0.3s ease;
+            transform-style: preserve-3d;
+        }
+        .project-card:hover {
+            transform: perspective(1000px) rotateX(5deg) rotateY(5deg) scale(1.02);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+        }
+        .timeline-item:not(:last-child)::after {
+            content: '';
+            position: absolute;
+            left: 1.25rem;
+            top: 2.5rem;
+            height: calc(100% - 2.5rem);
+            width: 2px;
+            background-color: #e5e7eb;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800">
+    <!-- Navigation -->
+    <nav class="fixed w-full bg-white shadow-sm z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center">
+                    <span class="text-xl font-bold text-blue-600">Hari Prasad Putta</span>
+                </div>
+                <div class="hidden md:flex items-center space-x-8">
+                    <a href="#about" class="text-gray-600 hover:text-blue-600 transition">About</a>
+                    <a href="#achievements" class="text-gray-600 hover:text-blue-600 transition">Achievements</a>
+                    <a href="#experience" class="text-gray-600 hover:text-blue-600 transition">Experience</a>
+                    <a href="#skills" class="text-gray-600 hover:text-blue-600 transition">Skills</a>
+                    <a href="#contact" class="text-gray-600 hover:text-blue-600 transition">Contact</a>
+                </div>
+                <div class="md:hidden flex items-center">
+                    <button id="menu-toggle" class="text-gray-600 hover:text-blue-600">
+                        <i data-feather="menu"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Mobile Menu -->
+    <div id="mobile-menu" class="hidden fixed inset-0 bg-white z-40 pt-16">
+        <div class="flex flex-col items-center space-y-6 py-8">
+            <a href="#about" class="text-gray-600 hover:text-blue-600 text-lg">About</a>
+            <a href="#achievements" class="text-gray-600 hover:text-blue-600 text-lg">Achievements</a>
+            <a href="#experience" class="text-gray-600 hover:text-blue-600 text-lg">Experience</a>
+            <a href="#skills" class="text-gray-600 hover:text-blue-600 text-lg">Skills</a>
+            <a href="#contact" class="text-gray-600 hover:text-blue-600 text-lg">Contact</a>
+        </div>
+    </div>
+
+    <!-- Hero Section -->
+    <section id="hero" class="relative pt-24 pb-20 md:pt-32 md:pb-28 overflow-hidden">
+        <div id="vanta-background" class="absolute inset-0"></div>
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <div class="md:flex md:items-center md:justify-between">
+                <div class="md:w-1/2" data-aos="fade-right">
+                    <h1 class="text-4xl md:text-5xl font-bold text-gray-900 mb-4">Hari Prasad Putta</h1>
+                    <h2 class="text-2xl md:text-3xl font-semibold text-blue-600 mb-6">DevOps Engineer</h2>
+                    <p class="text-lg text-gray-600 mb-8 max-w-lg">
+                        Automating and optimizing deployment pipelines with a focus on CI/CD, containerization, and monitoring.
+                    </p>
+                    <div class="flex space-x-4">
+                        <a href="#achievements" class="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition shadow-md">
+                            View My Work
+                        </a>
+                        <a href="https://raw.githubusercontent.com/hariprasad8452/Hari-Devops-Profile/master/Hari_Prasad_Putta.pdf" 
+                            download="Hari_Devops_Resume.pdf"
+                            class="px-6 py-3 border border-blue-600 text-blue-600 rounded-lg hover:bg-blue-50 transition">
+                            Download Resume
+                        </a>
+                    </div>
+                </div>
+                <div class="hidden md:block md:w-1/2" data-aos="fade-left">
+                    <div class="flex justify-center">
+                        <div class="relative">
+                            <div class="w-64 h-64 bg-blue-100 rounded-full absolute -top-4 -left-4"></div>
+                            <img src="http://static.photos/technology/640x360/42" alt="Hari Prasad Putta" class="relative w-64 h-64 rounded-full object-cover border-4 border-white shadow-xl">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section id="about" class="py-16 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-12" data-aos="fade-up">
+                <h2 class="text-3xl font-bold text-gray-900 mb-4">About Me</h2>
+                <div class="w-20 h-1 bg-blue-600 mx-auto"></div>
+            </div>
+            <div class="max-w-3xl mx-auto text-center" data-aos="fade-up">
+                <p class="text-lg text-gray-600 mb-6">
+                    DevOps Engineer with 3+ years of hands-on experience in CI/CD automation, containerization and data visualization. Skilled in developing scalable monitoring solutions using Elasticsearch and Kibana, with a strong track record of optimizing deployment pipelines. Proficient in Docker, Jenkins, and artifact management tools like JFrog, with a focus on improving system reliability, observability, and delivery efficiency
+                </p>
+                <p class="text-lg text-gray-600">
+                    Skilled in containerization technologies, cloud platforms, and infrastructure as code. Committed to continuous learning and staying updated with the latest industry trends and technologies.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Achievements Section -->
+    <section id="achievements" class="py-16 bg-gray-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-12" data-aos="fade-up">
+                <h2 class="text-3xl font-bold text-gray-900 mb-4">Professional Impact</h2>
+                <div class="w-20 h-1 bg-blue-600 mx-auto"></div>
+            </div>
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <div class="project-card bg-white p-6 rounded-xl shadow-md" data-aos="fade-up" data-aos-delay="100">
+                    <div class="text-blue-600 mb-4">
+                        <i data-feather="zap" class="w-8 h-8"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-2">Reduced Deployment Time by 35%</h3>
+                    <p class="text-gray-600">
+                        Architected automated workflows using Python, Jenkins, and Docker to streamline deployment processes.
+                    </p>
+                </div>
+                <div class="project-card bg-white p-6 rounded-xl shadow-md" data-aos="fade-up" data-aos-delay="200">
+                    <div class="text-blue-600 mb-4">
+                        <i data-feather="eye" class="w-8 h-8"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-2">Dashboard as Code for Kibana</h3>
+                    <p class="text-gray-600">
+                        Implemented Kibana dashboards as code to ensure consistency across environments and enable version control.
+                    </p>
+                </div>
+                <div class="project-card bg-white p-6 rounded-xl shadow-md" data-aos="fade-up" data-aos-delay="300">
+                    <div class="text-blue-600 mb-4">
+                        <i data-feather="activity" class="w-8 h-8"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-2">Build Failure Analyzer</h3>
+                    <p class="text-gray-600">
+                        Developed a tool to analyze and categorize build failures, reducing troubleshooting time by 40%.
+                    </p>
+                </div>
+                <div class="project-card bg-white p-6 rounded-xl shadow-md" data-aos="fade-up" data-aos-delay="100">
+                    <div class="text-blue-600 mb-4">
+                        <i data-feather="clock" class="w-8 h-8"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-2">MTTR Reduction</h3>
+                    <p class="text-gray-600">
+                        Improved monitoring and alerting systems, reducing mean time to resolution by 30%.
+                    </p>
+                </div>
+                <div class="project-card bg-white p-6 rounded-xl shadow-md" data-aos="fade-up" data-aos-delay="200">
+                    <div class="text-blue-600 mb-4">
+                        <i data-feather="bar-chart-2" class="w-8 h-8"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-2">Dashboard Performance Optimization</h3>
+                    <p class="text-gray-600">
+                        Engineered high-performance Kibana dashboards, improving data query speed and delivering actionable insights to stakeholders.
+                    </p>
+                </div>
+                <div class="project-card bg-white p-6 rounded-xl shadow-md" data-aos="fade-up" data-aos-delay="300">
+                    <div class="text-blue-600 mb-4">
+                        <i data-feather="users" class="w-8 h-8"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-2">Cross-Team Collaboration</h3>
+                    <p class="text-gray-600">
+                        Streamlined sprint planning and issue tracking in Jira, improving transparency and reducing blockers between Dev and Ops.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Experience Section -->
+    <section id="experience" class="py-16 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-12" data-aos="fade-up">
+                <h2 class="text-3xl font-bold text-gray-900 mb-4">Professional Journey</h2>
+                <div class="w-20 h-1 bg-blue-600 mx-auto"></div>
+            </div>
+            <div class="max-w-3xl mx-auto">
+                <div class="relative">
+                    <!-- Timeline Item -->
+                    <div class="timeline-item relative pl-12 pb-8" data-aos="fade-up">
+                        <div class="absolute left-0 top-0 w-10 h-10 rounded-full bg-blue-600 flex items-center justify-center text-white">
+                            <i data-feather="briefcase" class="w-5 h-5"></i>
+                        </div>
+                        <div class="bg-gray-50 p-6 rounded-lg shadow-sm">
+                            <div class="flex flex-col md:flex-row md:items-center md:justify-between mb-2">
+                                <h3 class="text-xl font-semibold">DevOps Engineer / Automation Engineer</h3>
+                                <span class="text-blue-600 font-medium">March 2023 - Present </span>
+                            </div>
+                            <div class="flex items-center text-gray-600 mb-4">
+                                <i data-feather="map-pin" class="w-4 h-4 mr-2"></i>
+                                <span>Wipro (Client: Ericsson)</span>
+                            </div>
+                            <ul class="list-disc pl-5 space-y-2 text-gray-600">
+                                <li>Automated Kibana visualizations by processing Spinnaker JSON data with Python, improving real-time visibility into CI/CD pipelines</li>
+                                <li>Developed automation scripts integrated with Jenkins pipelines (time-based triggers), reducing manual effort and improving pipeline reliability</li>
+                                <li>Implemented Git version control workflows for automation scripts, dashboards, and CI/CD pipelines, ensuring consistency and traceability across environments</li>
+                                <li>Managed Docker image lifecycle using JFrog Artifactory integrated with Jenkins, streamlining container versioning and deployment across environments</li>
+                                <li>Built monitoring solutions to track MTTR, build failures, and deployment metrics, reducing downtime by 30% and troubleshooting time by 50%</li>
+                                <li>Automated deployment workflows with Jenkins, reducing release cycle time by 35% and increasing deployment frequency</li>
+                                <li>Deployed Elasticsearch pods on Kubernetes, gaining hands-on experience with container orchestration and cluster-based deployments</li>
+                                <li>Collaborated with cross-functional teams using Jira for sprint planning, task tracking, and incident management</li>
+                                <li>Authored technical documentation and developer guides covering CI/CD workflows, Git branching strategies, and automation scripts, accelerating onboarding and knowledge sharing</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- Education Item -->
+                    <div class="timeline-item relative pl-12" data-aos="fade-up">
+                        <div class="absolute left-0 top-0 w-10 h-10 rounded-full bg-blue-600 flex items-center justify-center text-white">
+                            <i data-feather="book" class="w-5 h-5"></i>
+                        </div>
+                        <div class="bg-gray-50 p-6 rounded-lg shadow-sm">
+                            <div class="flex flex-col md:flex-row md:items-center md:justify-between mb-2">
+                                <h3 class="text-xl font-semibold">Bachelor of Technology in Computer Science</h3>
+                                <span class="text-blue-600 font-medium">2018 - 2022</span>
+                            </div>
+                            <div class="flex items-center text-gray-600">
+                                <i data-feather="map-pin" class="w-4 h-4 mr-2"></i>
+                                <span>Anil Neerukonda Institute of Technology and Sciences</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Skills Section -->
+    <section id="skills" class="py-16 bg-gray-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-12" data-aos="fade-up">
+                <h2 class="text-3xl font-bold text-gray-900 mb-4">Technical Toolkit</h2>
+                <div class="w-20 h-1 bg-blue-600 mx-auto"></div>
+            </div>
+            <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+                <div class="skill-tag bg-white p-4 rounded-lg shadow-sm text-center" data-aos="fade-up" data-aos-delay="100">
+                    <i data-feather="git-merge" class="w-8 h-8 text-blue-600 mx-auto mb-2"></i>
+                    <span class="font-medium">Git</span>
+                </div>
+                <div class="skill-tag bg-white p-4 rounded-lg shadow-sm text-center" data-aos="fade-up" data-aos-delay="150">
+                    <i data-feather="settings" class="w-8 h-8 text-blue-600 mx-auto mb-2"></i>
+                    <span class="font-medium">Jenkins</span>
+                </div>
+                <div class="skill-tag bg-white p-4 rounded-lg shadow-sm text-center" data-aos="fade-up" data-aos-delay="200">
+                    <i data-feather="box" class="w-8 h-8 text-blue-600 mx-auto mb-2"></i>
+                    <span class="font-medium">Maven</span>
+                </div>
+                <div class="skill-tag bg-white p-4 rounded-lg shadow-sm text-center" data-aos="fade-up" data-aos-delay="250">
+                    <i data-feather="terminal" class="w-8 h-8 text-blue-600 mx-auto mb-2"></i>
+                    <span class="font-medium">Ansible</span>
+                </div>
+                <div class="skill-tag bg-white p-4 rounded-lg shadow-sm text-center" data-aos="fade-up" data-aos-delay="300">
+                    <i data-feather="package" class="w-8 h-8 text-blue-600 mx-auto mb-2"></i>
+                    <span class="font-medium">Docker</span>
+                </div>
+                <div class="skill-tag bg-white p-4 rounded-lg shadow-sm text-center" data-aos="fade-up" data-aos-delay="100">
+                    <i data-feather="layers" class="w-8 h-8 text-blue-600 mx-auto mb-2"></i>
+                    <span class="font-medium">Terraform</span>
+                </div>
+                <div class="skill-tag bg-white p-4 rounded-lg shadow-sm text-center" data-aos="fade-up" data-aos-delay="150">
+                    <i data-feather="cloud" class="w-8 h-8 text-blue-600 mx-auto mb-2"></i>
+                    <span class="font-medium">AWS</span>
+                </div>
+                <div class="skill-tag bg-white p-4 rounded-lg shadow-sm text-center" data-aos="fade-up" data-aos-delay="200">
+                    <i data-feather="server" class="w-8 h-8 text-blue-600 mx-auto mb-2"></i>
+                    <span class="font-medium">Linux</span>
+                </div>
+                <div class="skill-tag bg-white p-4 rounded-lg shadow-sm text-center" data-aos="fade-up" data-aos-delay="250">
+                    <i data-feather="code" class="w-8 h-8 text-blue-600 mx-auto mb-2"></i>
+                    <span class="font-medium">Python</span>
+                </div>
+                <div class="skill-tag bg-white p-4 rounded-lg shadow-sm text-center" data-aos="fade-up" data-aos-delay="300">
+                    <i data-feather="bar-chart-2" class="w-8 h-8 text-blue-600 mx-auto mb-2"></i>
+                    <span class="font-medium">Elasticsearch</span>
+                </div>
+                <div class="skill-tag bg-white p-4 rounded-lg shadow-sm text-center" data-aos="fade-up" data-aos-delay="100">
+                    <i data-feather="pie-chart" class="w-8 h-8 text-blue-600 mx-auto mb-2"></i>
+                    <span class="font-medium">Kibana</span>
+                </div>
+                <div class="skill-tag bg-white p-4 rounded-lg shadow-sm text-center" data-aos="fade-up" data-aos-delay="150">
+                    <i data-feather="cpu" class="w-8 h-8 text-blue-600 mx-auto mb-2"></i>
+                    <span class="font-medium">Kubernetes</span>
+                </div>
+                <div class="skill-tag bg-white p-4 rounded-lg shadow-sm text-center" data-aos="fade-up" data-aos-delay="200">
+                    <i data-feather="monitor" class="w-8 h-8 text-blue-600 mx-auto mb-2"></i>
+                    <span class="font-medium">Prometheus</span>
+                </div>
+                <div class="skill-tag bg-white p-4 rounded-lg shadow-sm text-center" data-aos="fade-up" data-aos-delay="250">
+                    <i data-feather="database" class="w-8 h-8 text-blue-600 mx-auto mb-2"></i>
+                    <span class="font-medium">Grafana</span>
+                </div>
+                <div class="skill-tag bg-white p-4 rounded-lg shadow-sm text-center" data-aos="fade-up" data-aos-delay="300">
+                    <i data-feather="shield" class="w-8 h-8 text-blue-600 mx-auto mb-2"></i>
+                    <span class="font-medium">Security</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Certifications Section -->
+    <section class="py-16 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-12" data-aos="fade-up">
+                <h2 class="text-3xl font-bold text-gray-900 mb-4">Certifications</h2>
+                <div class="w-20 h-1 bg-blue-600 mx-auto"></div>
+            </div>
+            <div class="max-w-md mx-auto bg-gray-50 rounded-xl shadow-md overflow-hidden" data-aos="fade-up">
+                <div class="md:flex">
+                    <div class="p-8">
+                        <div class="uppercase tracking-wide text-sm text-blue-600 font-semibold mb-1">AWS</div>
+                        <h3 class="text-xl font-semibold text-gray-900 mb-2">AWS Certified Cloud Practitioner</h3>
+                        <p class="text-gray-600">Validated cloud fluency and foundational AWS knowledge</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="py-16 bg-gray-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-12" data-aos="fade-up">
+                <h2 class="text-3xl font-bold text-gray-900 mb-4">Get In Touch</h2>
+                <div class="w-20 h-1 bg-blue-600 mx-auto"></div>
+            </div>
+            <div class="max-w-4xl mx-auto">
+                <div class="bg-white rounded-xl shadow-md overflow-hidden" data-aos="fade-up">
+                    <div class="md:flex">
+                        <div class="md:w-1/2 p-8">
+                            <h3 class="text-xl font-semibold text-gray-900 mb-4">Contact Information</h3>
+                            <div class="space-y-4">
+                                <div class="flex items-start">
+                                    <i data-feather="mail" class="w-5 h-5 text-blue-600 mt-1 mr-3"></i>
+                                    <div>
+                                        <p class="text-gray-600">Email</p>
+                                        <a href="mailto:hariprasadputta8452@gmail.com" class="text-gray-900 hover:text-blue-600">hariprasadputta8452@gmail.com</a>
+                                    </div>
+                                </div>
+                                <div class="flex items-start">
+                                    <i data-feather="phone" class="w-5 h-5 text-blue-600 mt-1 mr-3"></i>
+                                    <div>
+                                        <p class="text-gray-600">Phone</p>
+                                        <a href="tel:+917036271505" class="text-gray-900 hover:text-blue-600">+91 7036271505</a>
+                                    </div>
+                                </div>
+                                <div class="flex items-start">
+                                    <i data-feather="map-pin" class="w-5 h-5 text-blue-600 mt-1 mr-3"></i>
+                                    <div>
+                                        <p class="text-gray-600">Location</p>
+                                        <p class="text-gray-900">Hyderabad, India</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="mt-8">
+                                <h4 class="text-lg font-medium text-gray-900 mb-4">Connect with me</h4>
+                                <div class="flex space-x-4">
+                                    <a href="https://www.linkedin.com/authwall?trk=gf&trkInfo=AQGTO2usZjbznQAAAZlN9MFwmduzpU0q6tqrLp4RiiTNBR1Ttv1zIcRM19mex6MgtXUr9ARd7z3PnSIfzMDSDBTSQ8bJxJJJBfbBTto05VTUJdBmf23rNBPjMkN_EVY0KNnp1H0=&original_referer=https://in.search.yahoo.com/&sessionRedirect=https%3A%2F%2Fin.linkedin.com%2Fin%2Fhari-prasad-putta-523593210" class="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center text-gray-700 hover:bg-blue-100 hover:text-blue-600 transition">
+                                        <i data-feather="linkedin" class="w-5 h-5"></i>
+                                    </a>
+                                    <a href="https://github.com/hariprasad8452" class="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center text-gray-700 hover:bg-blue-100 hover:text-blue-600 transition">
+                                        <i data-feather="github" class="w-5 h-5"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="md:w-1/2 bg-gray-50 p-8">
+                            <h3 class="text-xl font-semibold text-gray-900 mb-4">Send me a message</h3>
+                            <form id="contactForm" action="https://formspree.io/f/mrbavlad" method="POST" class="space-y-4">
+                                <div>
+                                    <label for="name" class="block text-sm font-medium text-gray-700 mb-1">Name</label>
+                                    <input type="text" name="name" id="name" required
+                                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500">
+                                </div>
+                                <div>
+                                    <label for="email" class="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                                    <input type="email" name="email" id="email" required
+                                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500">
+                                </div>
+                                <div>
+                                    <label for="message" class="block text-sm font-medium text-gray-700 mb-1">Message</label>
+                                    <textarea name="message" id="message" rows="4" required
+                                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"></textarea>
+                                </div>
+                                <button type="submit"
+                                    class="w-full px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition shadow-md">
+                                    Send Message
+                                </button>
+                            </form>
+                            
+                            <script>
+                            document.getElementById("contactForm").addEventListener("submit", async function(event) {
+                                event.preventDefault(); // stop default form action
+                                const form = event.target;
+                            
+                                let response = await fetch(form.action, {
+                                    method: form.method,
+                                    body: new FormData(form),
+                                    headers: { 'Accept': 'application/json' }
+                                });
+                            
+                                if (response.ok) {
+                                    alert("✅ Message sent successfully!");
+                                    form.reset(); // clear input fields
+                                } else {
+                                    alert("❌ Oops! Something went wrong. Please try again.");
+                                }
+                            });
+                            </script>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="py-8 bg-gray-900 text-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex flex-col md:flex-row justify-between items-center">
+                <div class="mb-4 md:mb-0">
+                    <p>&copy; 2024 Hari Prasad Putta. All rights reserved.</p>
+                </div>
+                <div class="flex space-x-6">
+                    <a href="#" class="hover:text-blue-400 transition">Privacy Policy</a>
+                    <a href="#" class="hover:text-blue-400 transition">Terms of Service</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Initialize AOS
+        AOS.init({
+            duration: 800,
+            easing: 'ease-in-out',
+            once: true
+        });
+
+        // Initialize Vanta.js background
+        if (window.innerWidth > 768) {
+            VANTA.NET({
+                el: "#vanta-background",
+                mouseControls: true,
+                touchControls: true,
+                gyroControls: false,
+                minHeight: 200.00,
+                minWidth: 200.00,
+                scale: 1.00,
+                scaleMobile: 1.00,
+                color: 0x3b82f6,
+                backgroundColor: 0xf8fafc,
+                points: 12.00,
+                maxDistance: 22.00,
+                spacing: 16.00
+            });
+        }
+
+        // Mobile menu toggle
+        document.getElementById('menu-toggle').addEventListener('click', function() {
+            document.getElementById('mobile-menu').classList.toggle('hidden');
+        });
+
+        // Close mobile menu when clicking on a link
+        document.querySelectorAll('#mobile-menu a').forEach(link => {
+            link.addEventListener('click', function() {
+                document.getElementById('mobile-menu').classList.add('hidden');
+            });
+        });
+
+        // Feather icons
+        feather.replace();
+    </script>
+</body>
+</html>
