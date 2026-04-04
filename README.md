@@ -1,4 +1,4 @@
-GIT
+# GIT (Goabal Information Tracker
 - Working Directory → where you write code  
 - Staging → prepare changes (`git add`)  
 - Local Repo → commits (`git commit`)  
