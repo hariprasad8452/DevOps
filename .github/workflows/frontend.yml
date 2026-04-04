@@ -5,6 +5,10 @@ on:
     paths:
       - 'projects/calculator_UI/**'
 
+permissions:
+  contents: write
+  pages: write
+
 jobs:
   deploy:
     runs-on: ubuntu-latest
