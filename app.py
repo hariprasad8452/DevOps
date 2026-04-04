@@ -19,7 +19,8 @@
 # Step E: git commit -m "Fix merge conflict" -> Finalize the resolution
 
 
-print("Hello, Hari")
+print("Hello, Harry")
+print("Hello, Harry Potter")
 print("Hello, Git!")
 print("This is my very first commit.")
 print("I am practicing the version control workflow.")
