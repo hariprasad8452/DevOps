@@ -9,6 +9,8 @@
 # 7. Pull changes from remote: git pull origin main
 # 8. Check status: git status
 
+
+print("Hello, Harry")
 print("Hello, Git!")
 print("This is my very first commit.")
 print("I am practicing the version control workflow.")
