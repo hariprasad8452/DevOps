@@ -1,4 +1,4 @@
-# --- GIT BRANCHING CHEAT SHEET (test.py) ---
+# --- GIT BRANCHING CHEAT SHEET ---
 # 1. git checkout -b test      -> CREATE and SWITCH to a new branch named 'test'
 # 2. git branch                -> LIST all local branches (current branch has *)
 # 3. git checkout main         -> SWITCH back to the main branch
