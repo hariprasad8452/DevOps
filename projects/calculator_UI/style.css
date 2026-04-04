@@ -1,0 +1,40 @@
+body {
+  background: linear-gradient(135deg, #141e30, #243b55);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  font-family: sans-serif;
+}
+
+.calculator {
+  background: #1e1e2f;
+  padding: 20px;
+  border-radius: 15px;
+}
+
+#display {
+  width: 100%;
+  height: 50px;
+  margin-bottom: 10px;
+  font-size: 20px;
+  text-align: right;
+}
+
+.buttons {
+  display: grid;
+  grid-template-columns: repeat(4, 60px);
+  gap: 10px;
+}
+
+button {
+  height: 50px;
+  border: none;
+  background: #333;
+  color: white;
+  cursor: pointer;
+}
+
+button:hover {
+  background: #00c6ff;
+}
