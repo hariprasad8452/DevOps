@@ -1,0 +1,25 @@
+name: Python CI
+
+on:
+  push:
+    paths:
+      - 'projects/python-cicd/**'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: projects/python-cicd
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+
+      - run: pip install -r requirements.txt
+      - run: pytest
+      - run: python app.py
