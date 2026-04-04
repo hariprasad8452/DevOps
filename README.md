@@ -27,11 +27,8 @@ Same file changed in:
 * remote
 ## Conflict Example
 ```
-<<<<<<< HEAD
 your code
-=======
 remote code
->>>>>>> main
 ## Fix Steps
 # edit file manually
 git add .
