@@ -3,7 +3,7 @@ name: Python CI
 on:
   push:
     paths:
-      - 'projects/python-cicd/**'
+      - 'projects/python-cicd-proj/**'
 
 jobs:
   build:
@@ -11,7 +11,7 @@ jobs:
 
     defaults:
       run:
-        working-directory: projects/python-cicd
+        working-directory: projects/python-cicd-proj
 
     steps:
       - uses: actions/checkout@v3
