@@ -1,4 +1,4 @@
-# --- GIT CHEAT SHEET FOR THIS FILE ---
+# --- GIT CHEAT SHEET  ---
 # 1. git init                -> Start a new local repository
 # 2. git add app.py          -> Stage changes (prepare for commit)
 # 3. git commit -m "msg"     -> Save staged changes with a descriptive message
