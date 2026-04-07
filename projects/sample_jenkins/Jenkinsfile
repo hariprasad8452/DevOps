@@ -1,0 +1,108 @@
+pipeline {
+
+    agent none   // we control agents per stage
+
+    parameters {
+        string(name: 'ENV', defaultValue: 'dev', description: 'Deployment environment')
+    }
+
+    environment {
+        APP_NAME = "fullstack-app"
+        BUILD_VERSION = "${env.BUILD_NUMBER}"
+    }
+
+    stages {
+
+        stage('Checkout') {
+            agent any
+            steps {
+                checkout scm
+            }
+        }
+
+        stage('Install Dependencies') {
+            agent { label 'linux' }
+            steps {
+                sh '''
+                python3 -m venv venv
+                source venv/bin/activate
+                pip install -r requirements.txt
+                '''
+            }
+        }
+
+        stage('Run Tests') {
+            agent { label 'linux' }
+            steps {
+                sh '''
+                source venv/bin/activate
+                pytest
+                '''
+            }
+        }
+
+        stage('Parallel Build') {
+            parallel {
+
+                stage('Backend Build') {
+                    agent any
+                    steps {
+                        sh 'echo "Building backend..."'
+                    }
+                }
+
+                stage('Frontend Build') {
+                    agent any
+                    steps {
+                        sh 'echo "Building frontend..."'
+                    }
+                }
+            }
+        }
+
+        stage('Package') {
+            agent any
+            steps {
+                sh 'zip app.zip -r backend frontend'
+            }
+        }
+
+        stage('Archive') {
+            agent any
+            steps {
+                archiveArtifacts artifacts: 'app.zip'
+            }
+        }
+
+        stage('Use Secret') {
+            agent any
+            steps {
+                withCredentials([string(credentialsId: 'api-key', variable: 'API_KEY')]) {
+                    sh 'echo "Using secret key"'
+                }
+            }
+        }
+
+        stage('Conditional Deploy') {
+            agent any
+            when {
+                expression { params.ENV == 'prod' }
+            }
+            steps {
+                echo "Deploying to production..."
+            }
+        }
+    }
+
+    post {
+        success {
+            echo "Build SUCCESS"
+        }
+        failure {
+            echo "Build FAILED"
+        }
+        always {
+            echo "Cleanup..."
+        }
+    }
+}
