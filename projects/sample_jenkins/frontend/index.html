@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Chat App</title>
+</head>
+<body>
+    <h1>Send Message</h1>
+    <input id="msg" />
+    <button onclick="send()">Send</button>
+
+    <p id="output"></p>
+
+    <script>
+        function send() {
+            fetch("http://localhost:5000/message", {
+                method: "POST",
+                headers: {"Content-Type": "application/json"},
+                body: JSON.stringify({msg: document.getElementById("msg").value})
+            })
+            .then(res => res.json())
+            .then(data => document.getElementById("output").innerText = data.response);
+        }
+    </script>
+</body>
+</html>
