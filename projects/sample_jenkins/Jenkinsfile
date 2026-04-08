@@ -36,10 +36,12 @@ pipeline {
         stage('Run Tests') {
             agent { label 'linux' }
             steps {
+                dir('projects/sample_jenkins') {
                 sh '''
                 . venv/bin/activate
                 pytest
                 '''
+                }
             }
         }
 
