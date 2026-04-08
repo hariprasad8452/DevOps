@@ -1,59 +1,104 @@
 pipeline {
     agent any
 
+    parameters {
+        string(name: 'ENV', defaultValue: 'dev', description: 'Deployment environment')
+    }
+
+    environment {
+        APP_NAME = "harry-microservices"
+        // Ensures Python can find your service modules during testing
+        PYTHONPATH = "${env.WORKSPACE}"
+    }
+
     stages {
-        stage('Install All Dependencies') {
+        stage('Initialize & Install') {
             steps {
-                sh 'pip install -r requirements.txt'
+                echo "Installing dependencies for all services..."
+                // Using '.' instead of 'source' for compatibility with Dash shell
+                sh '''
+                python3 -m venv venv
+                . venv/bin/activate
+                pip install -r requirements.txt
+                '''
             }
         }
 
-        stage('Run Unit Tests') {
+        stage('Unit Tests') {
             steps {
-                // Ensure PYTHONPATH includes the root so tests can find the apps
-                sh 'export PYTHONPATH=$PYTHONPATH:. && python3 -m pytest tests/'
+                echo "Running centralized tests..."
+                sh '''
+                . venv/bin/activate
+                python3 -m pytest tests/test.py
+                '''
             }
         }
 
-        stage('Build & Package Services') {
-            parallel {
-                stage('User Service') {
-                    steps {
-                        dir('user-service') {
-                            sh 'echo "Packaging User Service..."'
-                            sh 'zip -r user-service.zip .'
-                        }
-                    }
+        stage('Build User Service') {
+            when {
+                anyOf {
+                    changeset "userService/**"
+                    changeset "Jenkinsfile"
+                    expression { params.ENV == 'prod' } // Force build if deploying to prod
                 }
-                stage('Chat Service') {
-                    steps {
-                        dir('chat-service') {
-                            sh 'echo "Packaging Chat Service..."'
-                            sh 'zip -r chat-service.zip .'
-                        }
-                    }
+            }
+            steps {
+                dir('userService') {
+                    echo "Changes detected in User Service. Packaging..."
+                    sh 'zip -r userService.zip .'
                 }
-                stage('Notification Service') {
-                    steps {
-                        dir('notification-service') {
-                            sh 'echo "Packaging Notification Service..."'
-                            sh 'zip -r notification-service.zip .'
-                        }
-                    }
+            }
+        }
+
+        stage('Build Chat Service') {
+            when {
+                anyOf {
+                    changeset "chatService/**"
+                    changeset "Jenkinsfile"
+                }
+            }
+            steps {
+                dir('chatService') {
+                    echo "Changes detected in Chat Service. Packaging..."
+                    sh 'zip -r chatService.zip .'
+                }
+            }
+        }
+
+        stage('Build Notification Service') {
+            when {
+                anyOf {
+                    changeset "notificationService/**"
+                    changeset "Jenkinsfile"
+                }
+            }
+            steps {
+                dir('notificationService') {
+                    echo "Changes detected in Notification Service. Packaging..."
+                    sh 'zip -r notificationService.zip .'
                 }
             }
         }
 
         stage('Archive Artifacts') {
             steps {
-                archiveArtifacts artifacts: '**/*.zip', fingerprint: true
+                echo "Archiving generated zip files..."
+                // This captures all zips from all subfolders
+                archiveArtifacts artifacts: '**/*.zip', fingerprint: true, allowEmptyArchive: true
             }
         }
     }
 
     post {
-        always {
-            echo "Pipeline finished. Check artifacts for service zips."
+        success {
+            echo "Build Success! Only modified services were processed."
+        }
+        failure {
+            echo "Build Failed. Please check the console output for errors."
+        }
+        cleanup {
+            echo "Cleaning up workspace..."
+            // Optional: delete venv or temporary files to save space
         }
     }
 }
