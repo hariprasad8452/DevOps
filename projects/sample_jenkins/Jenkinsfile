@@ -1,6 +1,5 @@
 pipeline {
-
-    agent none   // we control agents per stage
+    agent any // Changed from 'none' to 'any' at the top to keep the same workspace
 
     parameters {
         string(name: 'ENV', defaultValue: 'dev', description: 'Deployment environment')
@@ -9,104 +8,99 @@ pipeline {
     environment {
         APP_NAME = "fullstack-app"
         BUILD_VERSION = "${env.BUILD_NUMBER}"
+        // Set PYTHONPATH here so it applies to ALL stages automatically
+        PYTHONPATH = "projects/sample_jenkins"
     }
 
     stages {
-
         stage('Checkout') {
-            agent any
             steps {
                 checkout scm
             }
         }
 
         stage('Install Dependencies') {
-            agent { label 'linux' }
             steps {
                 dir('projects/sample_jenkins') {
-                sh '''
-                python3 -m venv venv
-                . venv/bin/activate
-                pip install -r requirements.txt
-                '''
+                    sh '''
+                    python3 -m venv venv
+                    . venv/bin/activate
+                    pip install -r requirements.txt
+                    '''
                 }
             }
         }
 
         stage('Run Tests') {
-            agent { label 'linux' }
             steps {
                 dir('projects/sample_jenkins') {
-                sh '''
-                . venv/bin/activate
-                pytest
-                '''
+                    sh '''
+                    . venv/bin/activate
+                    python3 -m pytest
+                    '''
                 }
             }
         }
 
         stage('Parallel Build') {
             parallel {
-
                 stage('Backend Build') {
-                    agent any
                     steps {
-                        sh 'echo "Building backend..."'
+                        sh 'echo "Building backend version ${BUILD_VERSION}..."'
                     }
                 }
-
                 stage('Frontend Build') {
-                    agent any
                     steps {
-                        sh 'echo "Building frontend..."'
+                        sh 'echo "Building frontend for ${params.ENV}..."'
                     }
                 }
             }
         }
 
         stage('Package') {
-            agent any
             steps {
-                sh 'zip app.zip -r backend frontend'
+                // We go into the project folder so 'zip' can see the backend/frontend folders
+                dir('projects/sample_jenkins') {
+                    sh 'zip -r app.zip backend frontend'
+                }
             }
         }
 
         stage('Archive') {
-            agent any
             steps {
-                archiveArtifacts artifacts: 'app.zip'
+                // We point to the specific path where the zip was created
+                archiveArtifacts artifacts: 'projects/sample_jenkins/app.zip', fingerprint: true
             }
         }
 
         stage('Use Secret') {
-            agent any
             steps {
+                // Ensure you have created a 'Secret Text' credential in Jenkins with ID 'api-key'
                 withCredentials([string(credentialsId: 'api-key', variable: 'API_KEY')]) {
-                    sh 'echo "Using secret key"'
+                    sh 'echo "Secret loaded successfully. Deployment version: ${BUILD_VERSION}"'
                 }
             }
         }
 
         stage('Conditional Deploy') {
-            agent any
             when {
                 expression { params.ENV == 'prod' }
             }
             steps {
-                echo "Deploying to production..."
+                echo "Deploying ${APP_NAME} to production environment..."
             }
         }
     }
 
     post {
         success {
-            echo "Build SUCCESS"
+            echo "Build SUCCESS: ${APP_NAME} v${BUILD_VERSION} is ready."
         }
         failure {
-            echo "Build FAILED"
+            echo "Build FAILED: Check the console logs for Python or Path errors."
         }
         always {
-            echo "Cleanup..."
+            echo "Cleaning up temporary files..."
         }
     }
 }
