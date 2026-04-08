@@ -46,12 +46,12 @@ pipeline {
             parallel {
                 stage('Backend Build') {
                     steps {
-                        sh 'echo "Building backend version ${BUILD_VERSION}..."'
+                        sh "echo 'Building backend version ${env.BUILD_VERSION}...'"
                     }
                 }
                 stage('Frontend Build') {
                     steps {
-                        sh 'echo "Building frontend for ${params.ENV}..."'
+                        sh "echo 'Building frontend for ${params.ENV}...'"
                     }
                 }
             }
