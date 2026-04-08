@@ -1,0 +1,59 @@
+pipeline {
+    agent any
+
+    stages {
+        stage('Install All Dependencies') {
+            steps {
+                sh 'pip install -r requirements.txt'
+            }
+        }
+
+        stage('Run Unit Tests') {
+            steps {
+                // Ensure PYTHONPATH includes the root so tests can find the apps
+                sh 'export PYTHONPATH=$PYTHONPATH:. && python3 -m pytest tests/'
+            }
+        }
+
+        stage('Build & Package Services') {
+            parallel {
+                stage('User Service') {
+                    steps {
+                        dir('user-service') {
+                            sh 'echo "Packaging User Service..."'
+                            sh 'zip -r user-service.zip .'
+                        }
+                    }
+                }
+                stage('Chat Service') {
+                    steps {
+                        dir('chat-service') {
+                            sh 'echo "Packaging Chat Service..."'
+                            sh 'zip -r chat-service.zip .'
+                        }
+                    }
+                }
+                stage('Notification Service') {
+                    steps {
+                        dir('notification-service') {
+                            sh 'echo "Packaging Notification Service..."'
+                            sh 'zip -r notification-service.zip .'
+                        }
+                    }
+                }
+            }
+        }
+
+        stage('Archive Artifacts') {
+            steps {
+                archiveArtifacts artifacts: '**/*.zip', fingerprint: true
+            }
+        }
+    }
+
+    post {
+        always {
+            echo "Pipeline finished. Check artifacts for service zips."
+        }
+    }
+}
