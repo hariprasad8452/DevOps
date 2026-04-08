@@ -6,99 +6,74 @@ pipeline {
     }
 
     environment {
-        APP_NAME = "harry-microservices"
-        // Ensures Python can find your service modules during testing
-        PYTHONPATH = "${env.WORKSPACE}"
+        APP_NAME = "sample-jenkins-app"
+        // Set the root of the project path for easy reference
+        PROJECT_PATH = "projects/sample_jenkins"
+        // Ensures Python looks inside the backend folder for imports
+        PYTHONPATH = "${env.WORKSPACE}/${env.PROJECT_PATH}"
     }
 
     stages {
-        stage('Initialize & Install') {
+        stage('Initialize') {
             steps {
-                echo "Installing dependencies for all services..."
-                // Using '.' instead of 'source' for compatibility with Dash shell
-                sh '''
-                python3 -m venv venv
-                . venv/bin/activate
-                pip install -r requirements.txt
-                '''
+                dir("${env.PROJECT_PATH}") {
+                    echo "Checking environment..."
+                    sh '''
+                    python3 -m venv venv
+                    . venv/bin/activate
+                    pip install -r requirements.txt
+                    '''
+                }
             }
         }
 
-        stage('Unit Tests') {
+        stage('Run Unit Tests') {
             steps {
-                echo "Running centralized tests..."
-                sh '''
-                . venv/bin/activate
-                python3 -m pytest tests/test.py
-                '''
+                dir("${env.PROJECT_PATH}") {
+                    echo "Executing tests in ${env.PROJECT_PATH}/tests"
+                    sh '''
+                    . venv/bin/activate
+                    # Running via 'python3 -m pytest' solves most import errors
+                    python3 -m pytest tests/test_app.py
+                    '''
+                }
             }
         }
 
-        stage('Build User Service') {
+        stage('Package Application') {
+            steps {
+                dir("${env.PROJECT_PATH}") {
+                    echo "Zipping frontend and backend folders..."
+                    // Zip the specific folders you mentioned
+                    sh 'zip -r app.zip backend frontend index.html'
+                }
+            }
+        }
+
+        stage('Archive') {
+            steps {
+                echo "Archiving artifacts from ${env.PROJECT_PATH}"
+                // Path is relative to the Workspace Root
+                archiveArtifacts artifacts: "${env.PROJECT_PATH}/app.zip", fingerprint: true
+            }
+        }
+
+        stage('Deploy (Conditional)') {
             when {
-                anyOf {
-                    changeset "userService/**"
-                    changeset "Jenkinsfile"
-                    expression { params.ENV == 'prod' } // Force build if deploying to prod
-                }
+                expression { params.ENV == 'prod' }
             }
             steps {
-                dir('userService') {
-                    echo "Changes detected in User Service. Packaging..."
-                    sh 'zip -r userService.zip .'
-                }
-            }
-        }
-
-        stage('Build Chat Service') {
-            when {
-                anyOf {
-                    changeset "chatService/**"
-                    changeset "Jenkinsfile"
-                }
-            }
-            steps {
-                dir('chatService') {
-                    echo "Changes detected in Chat Service. Packaging..."
-                    sh 'zip -r chatService.zip .'
-                }
-            }
-        }
-
-        stage('Build Notification Service') {
-            when {
-                anyOf {
-                    changeset "notificationService/**"
-                    changeset "Jenkinsfile"
-                }
-            }
-            steps {
-                dir('notificationService') {
-                    echo "Changes detected in Notification Service. Packaging..."
-                    sh 'zip -r notificationService.zip .'
-                }
-            }
-        }
-
-        stage('Archive Artifacts') {
-            steps {
-                echo "Archiving generated zip files..."
-                // This captures all zips from all subfolders
-                archiveArtifacts artifacts: '**/*.zip', fingerprint: true, allowEmptyArchive: true
+                echo "Deploying version ${env.BUILD_NUMBER} to production..."
             }
         }
     }
 
     post {
         success {
-            echo "Build Success! Only modified services were processed."
+            echo "Successfully built and archived: ${env.PROJECT_PATH}/app.zip"
         }
         failure {
-            echo "Build Failed. Please check the console output for errors."
-        }
-        cleanup {
-            echo "Cleaning up workspace..."
-            // Optional: delete venv or temporary files to save space
+            echo "Build failed. Check paths for: ${env.PROJECT_PATH}"
         }
     }
 }
