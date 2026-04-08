@@ -6,18 +6,19 @@ pipeline {
     }
 
     environment {
-        APP_NAME = "sample-jenkins-app"
-        // Set the root of the project path for easy reference
-        PROJECT_PATH = "projects/sample_jenkins"
-        // Ensures Python looks inside the backend folder for imports
-        PYTHONPATH = "${env.WORKSPACE}/${env.PROJECT_PATH}"
+        // Root path within your Git repository
+        BASE_PATH = "projects/sample_jenkins"
+        // Unique version string for this specific build
+        VERSION = "1.0.${env.BUILD_NUMBER}"
+        // Ensures Python finds all service modules for tests across all stages
+        PYTHONPATH = "${env.WORKSPACE}/${env.BASE_PATH}"
     }
 
     stages {
-        stage('Initialize') {
+        stage('Initialize & Dependencies') {
             steps {
-                dir("${env.PROJECT_PATH}") {
-                    echo "Checking environment..."
+                dir("${env.BASE_PATH}") {
+                    echo "Setting up Virtual Environment and installing requirements..."
                     sh '''
                     python3 -m venv venv
                     . venv/bin/activate
@@ -27,53 +28,98 @@ pipeline {
             }
         }
 
-        stage('Run Unit Tests') {
-            steps {
-                dir("${env.PROJECT_PATH}") {
-                    echo "Executing tests in ${env.PROJECT_PATH}/tests"
-                    sh '''
-                    . venv/bin/activate
-                    # Running via 'python3 -m pytest' solves most import errors
-                    python3 -m pytest tests/test_app.py
-                    '''
+        stage('Parallel Service Pipeline') {
+            // Runs User, Chat, and Notification workflows at the same time
+            parallel {
+                
+                stage('User Service Workflow') {
+                    when { 
+                        anyOf {
+                            changeset "${env.BASE_PATH}/userService/**" 
+                            changeset "${env.BASE_PATH}/Jenkinsfile"
+                        }
+                    }
+                    steps {
+                        dir("${env.BASE_PATH}") {
+                            echo "Testing User Service..."
+                            sh '. venv/bin/activate && python3 -m pytest tests/test_user.py'
+                            
+                            echo "Packaging User Service v${env.VERSION}..."
+                            sh "zip -r user-service-${env.VERSION}.zip userService/"
+                        }
+                    }
+                }
+
+                stage('Chat Service Workflow') {
+                    when { 
+                        anyOf {
+                            changeset "${env.BASE_PATH}/chatService/**" 
+                            changeset "${env.BASE_PATH}/Jenkinsfile"
+                        }
+                    }
+                    steps {
+                        dir("${env.BASE_PATH}") {
+                            echo "Testing Chat Service..."
+                            sh '. venv/bin/activate && python3 -m pytest tests/test_chat.py'
+                            
+                            echo "Packaging Chat Service v${env.VERSION}..."
+                            sh "zip -r chat-service-${env.VERSION}.zip chatService/"
+                        }
+                    }
+                }
+
+                stage('Notification Service Workflow') {
+                    when { 
+                        anyOf {
+                            changeset "${env.BASE_PATH}/notificationService/**" 
+                            changeset "${env.BASE_PATH}/Jenkinsfile"
+                        }
+                    }
+                    steps {
+                        dir("${env.BASE_PATH}") {
+                            echo "Testing Notification Service..."
+                            sh '. venv/bin/activate && python3 -m pytest tests/test_notification.py'
+                            
+                            echo "Packaging Notification Service v${env.VERSION}..."
+                            sh "zip -r notification-service-${env.VERSION}.zip notificationService/"
+                        }
+                    }
                 }
             }
         }
 
-        stage('Package Application') {
+        stage('Artifact Management') {
             steps {
-                dir("${env.PROJECT_PATH}") {
-                    echo "Zipping frontend and backend folders..."
-                    // Zip the specific folders you mentioned
-                    sh 'zip -r app.zip backend frontend index.html'
+                echo "Archiving versioned service packages..."
+                // fingerprint: true creates an MD5 hash for traceability
+                // allowEmptyArchive: true prevents failure if some services were skipped
+                archiveArtifacts artifacts: "${env.BASE_PATH}/*.zip", 
+                                 fingerprint: true, 
+                                 allowEmptyArchive: true
+            }
+        }
+
+        stage('Final Security Check') {
+            steps {
+                // Example of using a secret for a deployment notification
+                withCredentials([string(credentialsId: 'api-key', variable: 'API_KEY')]) {
+                    echo "Security check passed. Build ${env.VERSION} is ready for ${params.ENV}."
                 }
-            }
-        }
-
-        stage('Archive') {
-            steps {
-                echo "Archiving artifacts from ${env.PROJECT_PATH}"
-                // Path is relative to the Workspace Root
-                archiveArtifacts artifacts: "${env.PROJECT_PATH}/app.zip", fingerprint: true
-            }
-        }
-
-        stage('Deploy (Conditional)') {
-            when {
-                expression { params.ENV == 'prod' }
-            }
-            steps {
-                echo "Deploying version ${env.BUILD_NUMBER} to production..."
             }
         }
     }
 
     post {
         success {
-            echo "Successfully built and archived: ${env.PROJECT_PATH}/app.zip"
+            echo "--- PIPELINE SUCCESS ---"
+            echo "Artifacts are stored in the 'Build Artifacts' section."
         }
         failure {
-            echo "Build failed. Check paths for: ${env.PROJECT_PATH}"
+            echo "--- PIPELINE FAILED ---"
+            echo "Please review the parallel stage logs to identify the error."
+        }
+        always {
+            echo "Cleaning up local workspace process info..."
         }
     }
 }
