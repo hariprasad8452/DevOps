@@ -18,13 +18,13 @@ stages {
 
     stage('Build Backend Image') {
         steps {
-            bat 'docker build -t %BACKEND_IMAGE%:%TAG% -f projects/docker_e2e_proj/Dockerfile.backend .'
+            bat 'docker build -t %BACKEND_IMAGE%:%TAG% -f projects/docker_e2e_proj/docker/Dockerfile.backend .'
         }
     }
 
     stage('Build Frontend Image') {
         steps {
-            bat 'docker build -t %FRONTEND_IMAGE%:%TAG% -f projects/docker_e2e_proj/Dockerfile.frontend .'
+            bat 'docker build -t %FRONTEND_IMAGE%:%TAG% -f projects/docker_e2e_proj/docker/Dockerfile.frontend .'
         }
     }
 
