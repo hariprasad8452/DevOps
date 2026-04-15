@@ -11,7 +11,7 @@ pipeline {
         }
         stage('Build Docker Image') {
             steps {
-                sh 'docker build -t $IMAGE_NAME -f docker/docker/Dockerfile .'
+                sh 'docker build -t $IMAGE_NAME -f projects/docker/docker/Dockerfile .'
             }
         }
         stage('Run Container') {
