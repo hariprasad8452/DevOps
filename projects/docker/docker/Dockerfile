@@ -4,7 +4,7 @@ FROM nginx:alpine
 RUN rm -rf /usr/share/nginx/html/*
 
 # Copy our app
-COPY projects/docker/docker/app/index.html /usr/share/nginx/html/index.html
+COPY projects/docker/app/index.html /usr/share/nginx/html/index.html
 
 # Expose port
 EXPOSE 80
