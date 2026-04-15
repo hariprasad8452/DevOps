@@ -1,0 +1,276 @@
+# ==============================================================================
+# HARI'S DEVOPS MASTER NOTES: DOCKER (FROM SCRATCH → CI/CD INTEGRATION)
+# ==============================================================================
+
+# ------------------------------------------------------------------------------
+# CONTEXT: WHERE DOCKER FITS IN DEVOPS
+# ------------------------------------------------------------------------------
+# BEFORE DOCKER (The "Zip" Era):
+# - Flow: Code → Jenkins → Build → Test → Package (zip) → Deploy.
+# - PROBLEM: "Works on my machine" syndrome, environment mismatch, manual setup.
+#
+# AFTER DOCKER (The "Immutable" Era):
+# - Flow: Code → Test → Docker Build → Push Image → Deploy Container.
+# - KEY SHIFT: Moving from "code artifact (zip)" to "system artifact (image)".
+# ------------------------------------------------------------------------------
+
+# ------------------------------------------------------------------------------
+# CORE DEFINITIONS: DOCKER, IMAGE, & CONTAINER
+# ------------------------------------------------------------------------------
+# DOCKER: Platform that packages code, runtime, libraries, and OS dependencies.
+# DOCKERFILE: The text-based 'Recipe' (Instructions on how to build).
+# IMAGE: The read-only 'Blueprint' (The static file stored in a registry).
+# CONTAINER: The 'Live Instance' (The running process of an image).
+# ANALOGY: Image = Class | Container = Object.
+# ------------------------------------------------------------------------------
+
+# ------------------------------------------------------------------------------
+# STRATEGIC COMPARISONS
+# ------------------------------------------------------------------------------
+# VS. VIRTUAL MACHINE: Docker is lightweight, shares host kernel, boots in seconds.
+# VS. VIRTUALENV: Virtualenv fixes Python libs; Docker fixes the WHOLE system.
+# VS. BARE METAL: Docker is automated and reproducible; Bare metal is manual/drifting.
+# ------------------------------------------------------------------------------
+
+# ------------------------------------------------------------------------------
+# TOPIC: THE DOCKER DAEMON (The "Engine")
+# ------------------------------------------------------------------------------
+# WHAT: 'dockerd' is the persistent background process that manages Docker objects.
+# WHERE: It lives on the HOST machine.
+# ROLE: 
+#   1. Manages Images, Containers, Networks, and Volumes.
+#   2. Handles API requests from the CLI (Client).
+#   3. Communicates with 'containerd' and 'runc' to talk to the Linux Kernel.
+#
+# INTERVIEW TRICK QUESTION: "Does the Docker Client run the containers?"
+# ANSWER: "No. The Client is just a remote control. The DAEMON does all the 
+# heavy lifting of building, running, and distributing containers."
+# ------------------------------------------------------------------------------
+
+# ------------------------------------------------------------------------------
+# TOPIC: THE CONTAINER LIFECYCLE (Step-by-Step)
+# ------------------------------------------------------------------------------
+# 1. CREATED: 
+#    - Command: 'docker create'
+#    - Status: The Daemon prepares the read/write layer but doesn't start the app.
+#
+# 2. RUNNING: 
+#    - Command: 'docker start' or 'docker run'
+#    - Status: The Daemon starts the main process (PID 1).
+#
+# 3. PAUSED: 
+#    - Command: 'docker pause'
+#    - Status: The Daemon "freezes" the process state. CPU usage drops to zero.
+#
+# 4. EXITED (Stopped): 
+#    - Command: 'docker stop'
+#    - Status: The Daemon sends SIGTERM (graceful) then SIGKILL (force). 
+#    - Note: The container still exists on disk; it just isn't consuming RAM.
+#
+# 5. DELETED: 
+#    - Command: 'docker rm'
+#    - Status: The Daemon wipes the container's metadata and temporary files.
+# ------------------------------------------------------------------------------
+
+# ------------------------------------------------------------------------------
+# DOCKERFILE OPTIMIZATION (LAYERS & CACHING)
+# ------------------------------------------------------------------------------
+# LOGIC: Each instruction creates a layer. Docker caches layers that haven't changed.
+# OPTIMIZATION: 
+#   1. COPY requirements.txt (Changes rarely)
+#   2. RUN pip install (Heavy work)
+#   3. COPY source code (Changes often)
+# BENEFIT: Drastically faster builds in Jenkins.
+# ------------------------------------------------------------------------------
+
+# ------------------------------------------------------------------------------
+# MULTI-STAGE BUILDS
+# ------------------------------------------------------------------------------
+# WHAT: Using multiple 'FROM' statements in one Dockerfile.
+# WHY: To separate the "Builder" (needs compilers/tools) from the "Runner" (clean).
+# USE CASE: Building a Go or Java app where you only need the final binary in Prod.
+# IMPACT: Reduces image size from 1GB+ to ~50MB and increases security.
+# ------------------------------------------------------------------------------
+
+# ------------------------------------------------------------------------------
+# VOLUMES & PERSISTENCE
+# ------------------------------------------------------------------------------
+# WHAT: Mounting a host directory to a container directory (-v /host:/container).
+# WHY: Containers are EPHEMERAL (stateless). Data is wiped when the container stops.
+# USE CASE: Databases (Postgres data), Logs, or shared configuration.
+# IMPACT: Keeps data persistent even if the container is deleted and recreated.
+# ------------------------------------------------------------------------------
+
+# ------------------------------------------------------------------------------
+# THE DOCKER COMMAND CHEAT SHEET (REVISION LIST)
+# ------------------------------------------------------------------------------
+# --- BUILD & STORAGE ---
+# docker build -t app:v1 .       # Build image from local Dockerfile.
+# docker pull nginx              # Fetch image from registry.
+# docker push user/app:v1        # Upload image to registry.
+
+# --- RUN & CONTROL ---
+# docker run -d -p 80:5000 app   # Run detached with port mapping (Host:Container).
+# docker stop <id>               # Gracefully stop a running process.
+# docker ps                      # List running containers.
+# docker ps -a                   # List all containers (including exited).
+
+# --- DEBUGGING ---
+# docker logs -f <id>            # Follow live output for troubleshooting.
+# docker exec -it <id> bash      # Enter a running container to check files/env.
+# docker inspect <id>            # View deep metadata (IPs, Mounts, Config).
+
+# --- CLEANUP ---
+# docker rm <id>                 # Remove a stopped container.
+# docker rmi <image_id>          # Remove an unused image.
+# docker system prune            # The "Clean Desk" command: Wipes unused data.
+# ------------------------------------------------------------------------------
+
+# ------------------------------------------------------------------------------
+# MISCELLANEOUS TOPICS
+# ------------------------------------------------------------------------------
+# .dockerignore: Prevents bloating the image with .git, node_modules, or logs.
+# CMD vs ENTRYPOINT: CMD is a default (overridable); ENTRYPOINT is the hardcoded command.
+# Resource Limits: Use --memory and --cpus to prevent a single container from crashing the host.
+# ------------------------------------------------------------------------------
+
+# ------------------------------------------------------------------------------
+# TOPIC: CMD vs ENTRYPOINT (The "Tool" vs "Arguments" Logic)
+# ------------------------------------------------------------------------------
+# ENTRYPOINT: The "Executable" part. Hard to override. Defines WHAT the app is.
+# CMD: The "Default Flag" part. Easy to override. Defines the default behavior.
+#
+# EXAMPLE:
+# ENTRYPOINT ["python"]
+# CMD ["app.py"]
+#
+# - 'docker run my-app'          -> Executes: python app.py
+# - 'docker run my-app script.py' -> Executes: python script.py (CMD was swapped)
+#
+# INTERVIEW TIP: 
+# "Use ENTRYPOINT for the binary name and CMD for default arguments. 
+# Always use the EXEC FORM ["arg1", "arg2"] so the app receives OS signals 
+# like SIGTERM correctly for graceful shutdowns."
+# ------------------------------------------------------------------------------
+
+# ------------------------------------------------------------------------------
+# FINAL INTERVIEW LINE
+# ------------------------------------------------------------------------------
+# "I use Docker to ensure 'Environment Parity'. By packaging the OS, Runtime, 
+# and Code into an Immutable Image, I guarantee that if the build passes in 
+# Jenkins, it will run identically in
+
+# ==============================================================================
+# HARI'S ULTIMATE PRODUCTION DOCKERFILE (ENHANCED VERSION)
+# ==============================================================================
+
+# 1. ARG (Build-time Variable)
+# Allows you to pass versions during build: docker build --build-arg PY_VERSION=3.11 .
+ARG PY_VERSION=3.11-slim
+
+# ------------------------------------------------------------------------------
+# STAGE 1: BUILDER (Multi-stage optimization)
+# ------------------------------------------------------------------------------
+FROM python:${PY_VERSION} AS builder
+
+WORKDIR /build
+
+# Install system-level build dependencies
+RUN apt-get update && apt-get install -y --no-install-recommends gcc python3-dev
+
+COPY requirements.txt .
+
+# Install dependencies to a local folder to keep the final image clean
+RUN pip install --user --no-cache-dir -r requirements.txt
+
+# ------------------------------------------------------------------------------
+# STAGE 2: RUNTIME (The Secure, Lean Image)
+# ------------------------------------------------------------------------------
+FROM python:${PY_VERSION}
+
+# 2. LABEL (Metadata for Documentation)
+LABEL maintainer="Hari <hari@devops.com>"
+LABEL version="2.0"
+LABEL description="Optimized Flask Backend for Microservices"
+
+# 3. ENV (Runtime Environment Variables)
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1 \
+    APP_HOME=/home/hari/app
+
+# 4. USER & SECURITY (The Non-Root Pattern)
+# Running as root is a security risk. If a hacker enters the container, 
+# they shouldn't have root access to your host.
+RUN groupadd -r devops && useradd -r -g devops -m hari
+USER hari
+
+WORKDIR $APP_HOME
+
+# Copy only the necessary libraries from the builder stage
+COPY --from=builder /root/.local /home/hari/.local
+COPY --chown=hari:devops . .
+
+# Update Path to find installed python scripts
+ENV PATH=/home/hari/.local/bin:$PATH
+
+# 5. HEALTHCHECK (Self-Healing)
+# Tells Docker/Jenkins if the app is actually alive, not just "running".
+HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
+  CMD curl -f http://localhost:5000/health || exit 1
+
+EXPOSE 5000
+
+# 6. ENTRYPOINT vs CMD (The Executable Pattern)
+# ENTRYPOINT defines the binary; CMD defines the default file.
+ENTRYPOINT ["python"]
+CMD ["backend/app.py"]
+
+# ==============================================================================
+# 🔍 NEW COMMAND EXPLANATIONS (INTERVIEW READY)
+# ==============================================================================
+
+# --- ARG ---
+# WHAT: Build-time variable.
+# WHY: Makes Dockerfiles reusable. You can change Python versions without 
+#      editing the file.
+# ------------------------------------------------------------------------------
+
+# --- LABEL ---
+# WHAT: Key-value metadata.
+# WHY: Helps in large companies to identify who owns an image and what 
+#      version it is.
+# ------------------------------------------------------------------------------
+
+# --- USER ---
+# WHAT: Switches from 'root' to a limited user.
+# WHY: THE MOST IMPORTANT SECURITY STEP. Prevents "Container Escape" attacks.
+# ------------------------------------------------------------------------------
+
+# --- HEALTHCHECK ---
+# WHAT: A command Docker runs every X seconds to check app status.
+# WHY: 'docker ps' only shows if the process is alive. HEALTHCHECK shows 
+#      if the webserver is actually responding.
+# ------------------------------------------------------------------------------
+
+# --- --chown=user:group ---
+# WHAT: Changes ownership during the COPY process.
+# WHY: Files copied into a container are owned by root by default. 
+#      If your app is running as 'hari', it might not have permission 
+#      to write to its own files unless you use chown.
+# ------------------------------------------------------------------------------
+
+# ==============================================================================
+# 🚀 UPDATED COMMANDS FOR YOUR REVISION
+# ==============================================================================
+
+# BUILD WITH ARG:
+# docker build --build-arg PY_VERSION=3.10 -t myapp:v2 .
+
+# CHECK HEALTH STATUS:
+# docker inspect --format='{{json .State.Health}}' <container_id>
+
+# RUN WITH RESOURCE LIMITS (Scalability Example):
+# docker run -d -p 5000:5000 --memory="512m" --cpus="1.0" myapp:v2
+
+# CLEANUP (The DevOps Way):
+# docker system prune -a --volumes (Deletes unused images, containers, and volumes)

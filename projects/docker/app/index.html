@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Harry | Senior DevOps Engineer</title>
+    <style>
+        :root {
+            --primary: #00d2ff;
+            --secondary: #3a7bd5;
+            --bg-dark: #080a0f;
+            --glass: rgba(255, 255, 255, 0.05);
+            --border: rgba(255, 255, 255, 0.1);
+            --accent-green: #27c93f;
+        }
+
+        * { box-sizing: border-box; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+
+        body {
+            margin: 0; padding: 20px;
+            background: radial-gradient(circle at top right, #1a1f2c 0%, var(--bg-dark) 100%);
+            color: #e6edf3;
+            font-family: 'Inter', -apple-system, sans-serif;
+            display: flex; justify-content: center; align-items: flex-start;
+            min-height: 100vh;
+        }
+
+        .container {
+            width: 100%; max-width: 1000px;
+            background: var(--glass);
+            backdrop-filter: blur(15px);
+            border: 1px solid var(--border);
+            border-radius: 24px;
+            padding: 40px;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.6);
+            margin-top: 20px;
+        }
+
+        .header { text-align: center; margin-bottom: 40px; }
+        
+        h1 {
+            font-size: clamp(2.5rem, 6vw, 4rem);
+            margin: 0;
+            background: linear-gradient(to right, #fff, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 900;
+            letter-spacing: -1px;
+        }
+
+        .tagline {
+            color: #8b949e;
+            font-size: 1.2rem;
+            margin-top: 10px;
+            font-weight: 300;
+        }
+
+        /* Terminal Display */
+        .terminal {
+            background: rgba(0, 0, 0, 0.85);
+            border-radius: 12px;
+            padding: 20px;
+            font-family: 'Fira Code', monospace;
+            border: 1px solid #30363d;
+            margin-bottom: 40px;
+            box-shadow: inset 0 0 20px rgba(0,0,0,1);
+        }
+
+        .terminal-header { display: flex; gap: 8px; margin-bottom: 15px; }
+        .dot { width: 12px; height: 12px; border-radius: 50%; }
+        .red { background: #ff5f56; } .yellow { background: #ffbd2e; } .green { background: #27c93f; }
+
+        .line { margin-bottom: 6px; font-size: 0.85rem; }
+        .prompt { color: var(--primary); font-weight: bold; }
+        .output { color: #8b949e; }
+
+        /* Skills Matrix */
+        .skills-matrix {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+        }
+
+        .skill-category {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 25px;
+        }
+
+        .skill-category:hover {
+            border-color: var(--primary);
+            background: rgba(255, 255, 255, 0.04);
+        }
+
+        .category-title {
+            color: var(--primary);
+            font-size: 0.9rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .tags { display: flex; flex-wrap: wrap; gap: 8px; }
+        
+        .tag {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border);
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            color: #d1d5db;
+        }
+
+        .tag:hover {
+            background: var(--primary);
+            color: #000;
+            border-color: var(--primary);
+            transform: scale(1.05);
+        }
+
+        @media (max-width: 600px) {
+            .container { padding: 20px; }
+            .skills-matrix { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header">
+        <h1>HARRY</h1>
+        <div class="tagline">Cloud & DevOps Infrastructure Expert</div>
+    </div>
+
+    <div class="terminal">
+        <div class="terminal-header">
+            <div class="dot red"></div>
+            <div class="dot yellow"></div>
+            <div class="dot green"></div>
+        </div>
+        <div class="line">
+            <span class="prompt">harry@production:~$</span> <span>jfrog rt-upload --target-env aws-prod</span>
+        </div>
+        <div class="line output" id="log-window">
+            > Initializing OTLP tracing...<br>
+            > Scanning Docker images (JFrog)... <span style="color:var(--accent-green)">PASSED</span><br>
+            > Executing Terraform plan... <span style="color:var(--accent-green)">SYNCED</span><br>
+            > APM Metrics Check: <span style="color:var(--accent-green)">HEALTHY</span>
+        </div>
+    </div>
+
+    <div class="skills-matrix">
+        <div class="skill-category">
+            <div class="category-title">⚙️ CI/CD & Automation</div>
+            <div class="tags">
+                <span class="tag">Jenkins</span><span class="tag">Spinnaker</span>
+                <span class="tag">Git</span><span class="tag">GitHub</span>
+                <span class="tag">Webhooks</span><span class="tag">Build Automation</span>
+            </div>
+        </div>
+
+        <div class="skill-category">
+            <div class="category-title">🐳 Containers & K8s</div>
+            <div class="tags">
+                <span class="tag">Docker</span><span class="tag">Registry</span>
+                <span class="tag">Kubernetes</span><span class="tag">Artifacts</span>
+            </div>
+        </div>
+
+        <div class="skill-category">
+            <div class="category-title">🏗️ Infrastructure as Code</div>
+            <div class="tags">
+                <span class="tag">Terraform</span><span class="tag">Ansible</span>
+                <span class="tag">YAML</span><span class="tag">AWS Cloud</span>
+            </div>
+        </div>
+
+        <div class="skill-category">
+            <div class="category-title">📊 Monitoring & Logging</div>
+            <div class="tags">
+                <span class="tag">Elasticsearch</span><span class="tag">Kibana</span>
+                <span class="tag">OpenTelemetry</span><span class="tag">APM</span>
+                <span class="tag">Log Analytics</span>
+            </div>
+        </div>
+
+        <div class="skill-category">
+            <div class="category-title">🐍 Programming</div>
+            <div class="tags">
+                <span class="tag">Python</span><span class="tag">Shell Scripting</span>
+                <span class="tag">Bash</span><span class="tag">Version Control</span>
+            </div>
+        </div>
+
+        <div class="skill-category">
+            <div class="category-title">📂 Management</div>
+            <div class="tags">
+                <span class="tag">Jira</span><span class="tag">JFrog Artifactory</span>
+                <span class="tag">Release Mgmt</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    const extraLogs = [
+        "> Pushing artifacts to JFrog...",
+        "> APM: Latency within threshold (12ms)",
+        "> Ansible: Playbook execution successful.",
+        "> K8s Cluster: Auto-scaling active.",
+        "> Kibana: Dashboard updated."
+    ];
+    let logIdx = 0;
+
+    function rollLogs() {
+        const win = document.getElementById("log-window");
+        const div = document.createElement("div");
+        div.innerHTML = extraLogs[logIdx];
+        win.appendChild(div);
+        logIdx = (logIdx + 1) % extraLogs.length;
+        if(win.children.length > 5) win.removeChild(win.firstChild);
+    }
+
+    setInterval(rollLogs, 3500);
+</script>
+
+</body>
+</html>
