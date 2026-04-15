@@ -1,0 +1,43 @@
+pipeline {
+    agent any
+    environment {
+        IMAGE_NAME = "my-nginx-app"
+    }
+    stages {
+        stage('Checkout') {
+            steps {
+                checkout scm
+            }
+        }
+        stage('Build Docker Image') {
+            steps {
+                sh 'docker build -t $IMAGE_NAME -f docker/Dockerfile .'
+            }
+        }
+        stage('Run Container') {
+            steps {
+                sh '''
+                docker stop my-container || true
+                docker rm my-container || true
+                docker run -d -p 8083:80 --name my-container $IMAGE_NAME
+                '''
+            }
+        }
+        stage('Test UI') {
+            steps {
+                sh 'curl -f http://localhost:8083'
+            }
+        }
+    }
+    post {
+        success {
+            echo "✅ Deployment Successful"
+        }
+        failure {
+            echo "❌ Deployment Failed"
+        }
+        always {
+            echo "Pipeline Finished"
+        }
+    }
+}
