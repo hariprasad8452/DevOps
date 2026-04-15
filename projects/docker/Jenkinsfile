@@ -1,3 +1,5 @@
+// my docker file
+
 // pipeline {
 //     agent any
 //     environment {
@@ -37,31 +39,31 @@
 //         failure {
 //             echo "❌ Deployment Failed"
 //         }
+//         always {
+//             echo "Pipeline Finished"
+//         }
+//     }
+// }
+
 
 pipeline {
 agent any
-
-```
 environment {
     IMAGE_NAME = "my-nginx-app"
     IMAGE_TAG = "${BUILD_NUMBER}"
     CONTAINER_NAME = "my-container-${BUILD_NUMBER}"
 }
-
 stages {
-
     stage('Checkout') {
         steps {
             checkout scm
         }
     }
-
     stage('Build Docker Image') {
         steps {
             bat 'docker build -t %IMAGE_NAME%:%IMAGE_TAG% -f projects/docker/docker/Dockerfile .'
         }
     }
-
     stage('Run Container') {
         steps {
             bat '''
@@ -70,14 +72,12 @@ stages {
             '''
         }
     }
-
     stage('Test UI') {
         steps {
             bat 'curl http://localhost:8083'
         }
     }
 }
-
 post {
     success {
         echo "SUCCESS: Deployment completed"
@@ -89,12 +89,4 @@ post {
         echo "Pipeline finished"
     }
 }
-```
-
 }
-
-//         always {
-//             echo "Pipeline Finished"
-//         }
-//     }
-// }
