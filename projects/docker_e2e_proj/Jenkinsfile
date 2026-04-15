@@ -1,7 +1,6 @@
 pipeline {
 agent any
 
-```
 environment {
     BACKEND_IMAGE = "backend-app"
     FRONTEND_IMAGE = "frontend-app"
@@ -68,7 +67,5 @@ post {
         echo "FAILURE: Check logs"
     }
 }
-```
-
 }
 
