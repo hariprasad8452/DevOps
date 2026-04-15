@@ -3,7 +3,7 @@ FROM python:3.9-slim AS builder
 
 WORKDIR /app
 
-COPY backend/requirements.txt .
+COPY projects/docker_e2e_proj/backend/requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Stage 2 (final)
