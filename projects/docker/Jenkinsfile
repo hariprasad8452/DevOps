@@ -45,13 +45,13 @@
 //     }
 // }
 
-
 pipeline {
 agent any
 environment {
     IMAGE_NAME = "my-nginx-app"
+    DOCKERHUB_USER = "hariprasad8452"
     IMAGE_TAG = "${BUILD_NUMBER}"
-    CONTAINER_NAME = "my-container-${BUILD_NUMBER}"
+    FULL_IMAGE = "%DOCKERHUB_USER%/%IMAGE_NAME%:%IMAGE_TAG%"
 }
 stages {
     stage('Checkout') {
@@ -59,34 +59,50 @@ stages {
             checkout scm
         }
     }
-    stage('Build Docker Image') {
+    stage('Build Image') {
         steps {
             bat 'docker build -t %IMAGE_NAME%:%IMAGE_TAG% -f projects/docker/docker/Dockerfile .'
         }
     }
-    stage('Run Container') {
+    stage('Tag Image') {
+        steps {
+            bat 'docker tag %IMAGE_NAME%:%IMAGE_TAG% %DOCKERHUB_USER%/%IMAGE_NAME%:%IMAGE_TAG%'
+        }
+    }
+    stage('Push to DockerHub') {
+        steps {
+            bat 'docker push %DOCKERHUB_USER%/%IMAGE_NAME%:%IMAGE_TAG%'
+        }
+    }
+    stage('Clean Local Container') {
+        steps {
+            bat 'docker rm -f deploy-container || exit 0'
+        }
+    }
+    stage('Pull from DockerHub') {
+        steps {
+            bat 'docker pull %DOCKERHUB_USER%/%IMAGE_NAME%:%IMAGE_TAG%'
+        }
+    }
+    stage('Run on 8084') {
         steps {
             bat '''
-            docker rm -f my-container || exit 0
-            docker run -d -p 8083:80 --name %CONTAINER_NAME% %IMAGE_NAME%:%IMAGE_TAG%
+            docker run -d -p 8084:80 --name deploy-container %DOCKERHUB_USER%/%IMAGE_NAME%:%IMAGE_TAG%
             '''
         }
     }
     stage('Test UI') {
         steps {
-            bat 'curl http://localhost:8083'
+            bat 'curl http://localhost:8084'
         }
     }
 }
 post {
     success {
-        echo "SUCCESS: Deployment completed"
+        echo "SUCCESS: Image built, pushed, pulled, and deployed"
     }
     failure {
         echo "FAILURE: Check logs"
-    }
-    always {
-        echo "Pipeline finished"
     }
 }
 }
