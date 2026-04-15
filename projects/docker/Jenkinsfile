@@ -1,44 +1,100 @@
+// pipeline {
+//     agent any
+//     environment {
+//         IMAGE_NAME = "my-nginx-app"
+//         IMAGE_TAG = "${BUILD_NUMBER}"
+//     }
+//     stages {
+//         stage('Checkout') {
+//             steps {
+//                 checkout scm
+//             }
+//         }
+//         stage('Build Docker Image') {
+//             steps {
+//                 sh 'docker build -t $IMAGE_NAME:$IMAGE_TAG -f projects/docker/docker/Dockerfile .'
+//             }
+//         }
+//         stage('Run Container') {
+//             steps {
+//                 sh '''
+//                 docker stop my-container || true
+//                 docker rm my-container || true
+//                 docker run -d -p 8083:80 --name my-container $IMAGE_NAME
+//                 '''
+//             }
+//         }
+//         stage('Test UI') {
+//             steps {
+//                 sh 'curl -f http://localhost:8083'
+//             }
+//         }
+//     }
+//     post {
+//         success {
+//             echo "✅ Deployment Successful"
+//         }
+//         failure {
+//             echo "❌ Deployment Failed"
+//         }
+
 pipeline {
-    agent any
-    environment {
-        IMAGE_NAME = "my-nginx-app"
-        IMAGE_TAG = "${BUILD_NUMBER}"
-    }
-    stages {
-        stage('Checkout') {
-            steps {
-                checkout scm
-            }
-        }
-        stage('Build Docker Image') {
-            steps {
-                sh 'docker build -t $IMAGE_NAME:$IMAGE_TAG -f projects/docker/docker/Dockerfile .'
-            }
-        }
-        stage('Run Container') {
-            steps {
-                sh '''
-                docker stop my-container || true
-                docker rm my-container || true
-                docker run -d -p 8083:80 --name my-container $IMAGE_NAME
-                '''
-            }
-        }
-        stage('Test UI') {
-            steps {
-                sh 'curl -f http://localhost:8083'
-            }
+agent any
+
+```
+environment {
+    IMAGE_NAME = "my-nginx-app"
+    IMAGE_TAG = "${BUILD_NUMBER}"
+    CONTAINER_NAME = "my-container-${BUILD_NUMBER}"
+}
+
+stages {
+
+    stage('Checkout') {
+        steps {
+            checkout scm
         }
     }
-    post {
-        success {
-            echo "✅ Deployment Successful"
+
+    stage('Build Docker Image') {
+        steps {
+            bat 'docker build -t %IMAGE_NAME%:%IMAGE_TAG% -f projects/docker/docker/Dockerfile .'
         }
-        failure {
-            echo "❌ Deployment Failed"
+    }
+
+    stage('Run Container') {
+        steps {
+            bat '''
+            docker rm -f my-container || exit 0
+            docker run -d -p 8083:80 --name %CONTAINER_NAME% %IMAGE_NAME%:%IMAGE_TAG%
+            '''
         }
-        always {
-            echo "Pipeline Finished"
+    }
+
+    stage('Test UI') {
+        steps {
+            bat 'curl http://localhost:8083'
         }
     }
 }
+
+post {
+    success {
+        echo "SUCCESS: Deployment completed"
+    }
+    failure {
+        echo "FAILURE: Check logs"
+    }
+    always {
+        echo "Pipeline finished"
+    }
+}
+```
+
+}
+
+//         always {
+//             echo "Pipeline Finished"
+//         }
+//     }
+// }
