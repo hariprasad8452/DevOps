@@ -1,0 +1,74 @@
+pipeline {
+agent any
+
+```
+environment {
+    BACKEND_IMAGE = "backend-app"
+    FRONTEND_IMAGE = "frontend-app"
+    TAG = "${BUILD_NUMBER}"
+    NETWORK = "devops-net"
+}
+
+stages {
+
+    stage('Checkout') {
+        steps {
+            checkout scm
+        }
+    }
+
+    stage('Build Backend Image') {
+        steps {
+            bat 'docker build -t %BACKEND_IMAGE%:%TAG% -f docker/Dockerfile.backend .'
+        }
+    }
+
+    stage('Build Frontend Image') {
+        steps {
+            bat 'docker build -t %FRONTEND_IMAGE%:%TAG% -f docker/Dockerfile.frontend .'
+        }
+    }
+
+    stage('Create Network') {
+        steps {
+            bat 'docker network create %NETWORK% || exit 0'
+        }
+    }
+
+    stage('Run Backend') {
+        steps {
+            bat '''
+            docker rm -f backend || exit 0
+            docker run -d --name backend --network %NETWORK% %BACKEND_IMAGE%:%TAG%
+            '''
+        }
+    }
+
+    stage('Run Frontend') {
+        steps {
+            bat '''
+            docker rm -f frontend || exit 0
+            docker run -d -p 8085:80 --name frontend --network %NETWORK% %FRONTEND_IMAGE%:%TAG%
+            '''
+        }
+    }
+
+    stage('Test Application') {
+        steps {
+            bat 'curl http://localhost:8085'
+        }
+    }
+}
+
+post {
+    success {
+        echo "SUCCESS: Full-stack app deployed"
+    }
+    failure {
+        echo "FAILURE: Check logs"
+    }
+}
+```
+
+}
+

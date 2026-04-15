@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Harry | Aspiring DevOps Engineer</title>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&family=Inter:wght@300;400;700;900&display=swap" rel="stylesheet">
+    <style>
+        /* [Keeping your previous styles for brevity - Glassmorphism & Dashboard] */
+        :root { --primary: #00d2ff; --secondary: #3a7bd5; --bg-dark: #05070a; --glass: rgba(255, 255, 255, 0.03); --border: rgba(255, 255, 255, 0.08); --success: #00ff88; }
+        * { box-sizing: border-box; transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
+        body { margin: 0; padding: 20px; background: var(--bg-dark); color: #e6edf3; font-family: 'Inter', sans-serif; display: flex; justify-content: center; }
+        .container { width: 100%; max-width: 1100px; margin-top: 40px; }
+        .profile-card { background: var(--glass); backdrop-filter: blur(20px); border: 1px solid var(--border); border-radius: 30px; padding: 50px; text-align: center; margin-bottom: 30px; }
+        h1 { font-size: clamp(3rem, 8vw, 5rem); margin: 0; font-weight: 900; letter-spacing: -3px; background: linear-gradient(to bottom, #fff 30%, #666); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .terminal-box { background: #000; border-radius: 20px; padding: 25px; font-family: 'Fira Code', monospace; border: 1px solid #333; box-shadow: 0 20px 40px rgba(0,0,0,0.4); min-height: 200px;}
+        .log-line { margin-bottom: 8px; font-size: 0.9rem; color: #8b949e; }
+        .log-line .cmd { color: var(--success); }
+        .log-line .user { color: var(--primary); }
+        .skills-sidebar { display: flex; flex-direction: column; gap: 15px; }
+        .category-btn { background: var(--glass); border: 1px solid var(--border); padding: 15px 25px; border-radius: 15px; cursor: pointer; text-align: left; color: #fff; font-weight: 600; }
+        .category-btn.active { background: var(--primary); color: #000; }
+        .dashboard { display: grid; grid-template-columns: 1fr 350px; gap: 30px; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="profile-card">
+        <h1>HARRY</h1>
+        <p>Full-Stack DevOps Architect</p>
+    </div>
+
+    <div class="dashboard">
+        <div class="terminal-box">
+            <div id="terminal-content">
+                <div class="log-line"><span class="user">harry@prod:~$</span> <span class="cmd">curl http://backend:5000/api/status</span></div>
+                <div id="backend-response" class="log-line" style="color: var(--success);">Waiting for backend handshake...</div>
+            </div>
+        </div>
+
+        <div class="skills-sidebar">
+            <button class="category-btn active" onclick="callBackend('CI/CD Status')">Check CI/CD Pipeline</button>
+            <button class="category-btn" onclick="callBackend('Infra Health')">Check AWS Infrastructure</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    function callBackend(context) {
+        const win = document.getElementById('terminal-content');
+        
+        // 1. Log the local command
+        const cmdLine = document.createElement('div');
+        cmdLine.className = 'log-line';
+        cmdLine.innerHTML = `<span class="user">harry@prod:~$</span> <span class="cmd">get-status --context "${context}"</span>`;
+        win.appendChild(cmdLine);
+
+        // 2. Fetch from your Flask API
+        fetch("http://localhost:5000/api/status") // Use localhost if running locally, or "backend" if in Docker
+        .then(res => res.json())
+        .then(data => {
+            const respLine = document.createElement('div');
+            respLine.className = 'log-line';
+            respLine.style.color = "#00ff88";
+            respLine.innerHTML = `> [BACKEND]: ${data.message} | Status: ${data.status}`;
+            win.appendChild(respLine);
+            
+            // Auto-scroll logic
+            if(win.children.length > 8) win.removeChild(win.firstChild);
+        })
+        .catch(err => {
+            const errLine = document.createElement('div');
+            errLine.className = 'log-line';
+            errLine.style.color = "#ff5f56";
+            errLine.innerHTML = `> [ERROR]: Backend unreachable. Check Flask logs.`;
+            win.appendChild(errLine);
+        });
+    }
+
+    // Initial call on load
+    window.onload = () => callBackend('System Init');
+</script>
+
+</body>
+</html>
