@@ -18,13 +18,13 @@ stages {
 
     stage('Build Backend Image') {
         steps {
-            bat 'docker build -t %BACKEND_IMAGE%:%TAG% -f docker/Dockerfile.backend .'
+            bat 'docker build -t %BACKEND_IMAGE%:%TAG% -f projects/docker_e2e_proj/Dockerfile.backend .'
         }
     }
 
     stage('Build Frontend Image') {
         steps {
-            bat 'docker build -t %FRONTEND_IMAGE%:%TAG% -f docker/Dockerfile.frontend .'
+            bat 'docker build -t %FRONTEND_IMAGE%:%TAG% -f projects/docker_e2e_proj/Dockerfile.frontend .'
         }
     }
 
@@ -47,14 +47,14 @@ stages {
         steps {
             bat '''
             docker rm -f frontend || exit 0
-            docker run -d -p 8085:80 --name frontend --network %NETWORK% %FRONTEND_IMAGE%:%TAG%
+            docker run -d -p 8086:80 --name frontend --network %NETWORK% %FRONTEND_IMAGE%:%TAG%
             '''
         }
     }
 
     stage('Test Application') {
         steps {
-            bat 'curl http://localhost:8085'
+            bat 'curl http://localhost:8086'
         }
     }
 }
