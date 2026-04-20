@@ -7,10 +7,22 @@ Runs pipelines, Automates builds, Orchestrates workflows.
 🔹 JENKINS ARCHITECTURE
 Controller (Brain) → Schedules jobs
 Agent (Muscle)     → Executes jobs (e.g., your harry-container)
+CORE ARCHITECTURE
+   - Controller (Master): The "Brain." Handles the UI, API, and job scheduling.
+   - Agent (Slave/Node): The "Muscle." Executes the actual commands. 
+   - Executor: A slot for a single job to run on an Agent. One Agent can have 
+               multiple executors (Parallel runs).
+
 
 🔹 PIPELINE AS CODE (✅ Jenkinsfile)
 Declarative Syntax: Structured and readable.
 Scripted Syntax: More flexible but complex.
+PIPELINE TYPES
+   - Declarative: (Recommended) Uses 'pipeline' block. Clean, structured.
+   - Scripted: Uses 'node' block. Pure Groovy. Used for high-logic complexity.
+   - Multibranch: (NEW) Automatically scans your Git repo and creates a job 
+     for every branch that contains a 'Jenkinsfile'. Essential for DevOps.
+
 1. Declarative Pipeline (Recommended)
 
 Pros: Easy to read, strict structure, integrates with Blue Ocean.
@@ -63,6 +75,11 @@ If your project is in a subfolder, use 'dir'.
 dir('projects/sample_jenkins') {
     sh 'pip install -r requirements.txt'
 }
+    WORKSPACE & DIRECTORY CONTEXT
+   - Default path: /var/lib/jenkins/workspace/<job_name>
+   - Context switching: Use 'dir()' to move into subdirectories.
+   - Workspace Cleanup: Use 'cleanWs()' in the post-block to delete files
+     after build completion to save disk space.
 
 2. SELECTIVE TRIGGERING (MONOREPO)
 Only run stages if specific folders change.
@@ -103,7 +120,11 @@ Usage:
 buildTools.helperMethod()
 
 🔹 TRIGGERING BUILDS (THE HEARTBEAT)
-
+TRIGGERING MECHANISMS
+   - Webhooks: Instant. Pushed by GitHub/GitLab. (Best for CI)
+   - Poll SCM: Jenkins asks Git "Anything new?". (Good for firewalled servers)
+   - Build Periodically: Cron-based. (Good for nightlies/cleanup)
+   - Generic Webhook Trigger: Allows non-Git tools to trigger jobs via API call.
 How does Jenkins know when to run? There are 4 main ways:
 
 1. POLL SCM (The "Pinger")
@@ -239,6 +260,20 @@ pipeline {
         failure { echo 'Build Failed - check console logs.' }
     }
 }
+
+POST-BUILD ACTIONS (Add this after "Triggers")
+   - Purpose: Defines what happens after a pipeline finishes.
+   - Blocks:
+     - always { ... }: Runs regardless of status (e.g., Send logs).
+     - success { ... }: Runs only on green build (e.g., Deploy to Prod).
+     - failure { ... }: Runs only on red build (e.g., Slack/Email Alert).
+     - changed { ... }: Runs only if the status changed from last time.
+
+PIPELINE TRICKS (POWER USER)
+   - 'when' directive: Controls stage execution (branch, changeset, environment).
+   - 'parallel': Speeds up pipelines by running independent tasks simultaneously.
+   - 'parameters': Allows user input (Choice, String, Password, Boolean).
+   - 'credentials': Use 'withCredentials' to inject secrets safely into the shell. 
 
 🔹 COMMON ERRORS & FIXES
 -----------------------------------
