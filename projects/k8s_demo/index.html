@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hari | K8s Cluster Ops</title>
+    <style>
+        :root {
+            --bg: #050505;
+            --primary: #00f2fe;
+            --secondary: #6366f1;
+            --glass: rgba(255, 255, 255, 0.03);
+            --border: rgba(255, 255, 255, 0.1);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+
+        body {
+            background-color: var(--bg);
+            color: white;
+            height: 100vh;
+            display: grid;
+            grid-template-columns: 250px 1fr;
+            overflow: hidden;
+        }
+
+        /* Side Navigation */
+        nav {
+            background: rgba(10, 10, 15, 0.8);
+            border-right: 1px solid var(--border);
+            padding: 2rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .nav-item {
+            padding: 10px 15px;
+            border-radius: 8px;
+            color: #64748b;
+            cursor: pointer;
+            transition: 0.3s;
+            font-size: 0.9rem;
+        }
+
+        .nav-item.active {
+            background: var(--glass);
+            color: var(--primary);
+            border-left: 3px solid var(--primary);
+        }
+
+        /* Main Content */
+        main {
+            padding: 2rem;
+            overflow-y: auto;
+            background: radial-gradient(circle at top right, rgba(99, 102, 241, 0.1), transparent);
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .status-pill {
+            background: rgba(16, 185, 129, 0.1);
+            color: #10b981;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            border: 1px solid rgba(16, 185, 129, 0.2);
+        }
+
+        /* The Main Hero Card */
+        .hero-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 1.5rem;
+        }
+
+        .card {
+            background: var(--glass);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 1.5rem;
+            position: relative;
+        }
+
+        h1 { font-size: 1.5rem; margin-bottom: 1rem; color: #fff; }
+
+        /* Pod Grid Simulation */
+        .pod-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+            gap: 10px;
+            margin-top: 1rem;
+        }
+
+        .pod {
+            height: 40px;
+            background: rgba(0, 242, 254, 0.1);
+            border: 1px solid var(--primary);
+            border-radius: 6px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+            transition: 0.3s;
+        }
+
+        .pod:hover { background: var(--primary); color: #000; transform: scale(1.05); }
+
+        /* Animation for "Traffic" */
+        .chart-container {
+            height: 150px;
+            width: 100%;
+            margin-top: 1rem;
+        }
+
+        svg { width: 100%; height: 100%; }
+
+        path {
+            stroke: var(--primary);
+            stroke-width: 2;
+            fill: none;
+            stroke-dasharray: 1000;
+            stroke-dashoffset: 1000;
+            animation: draw 5s linear infinite;
+        }
+
+        @keyframes draw {
+            to { stroke-dashoffset: 0; }
+        }
+
+        .log-stream {
+            font-family: 'Courier New', monospace;
+            font-size: 0.8rem;
+            color: #4ade80;
+            height: 200px;
+            overflow: hidden;
+            background: #000;
+            padding: 10px;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body>
+
+    <nav>
+        <div style="font-weight: bold; font-size: 1.2rem; color: #fff; margin-bottom: 2rem;">K8s Console</div>
+        <div class="nav-item active">Overview</div>
+        <div class="nav-item">Workloads</div>
+        <div class="nav-item">ConfigMaps</div>
+        <div class="nav-item">Logs</div>
+    </nav>
+
+    <main>
+        <div class="header">
+            <div>
+                <h2 id="greeting">Hello, Harry....</h2>
+                <p style="color: #64748b; font-size: 0.9rem;">Cluster ID: production-node-01</p>
+            </div>
+            <div class="status-pill">● System Healthy</div>
+        </div>
+
+        <div class="hero-grid">
+            <div class="card">
+                <h1>Active Pods</h1>
+                <div class="pod-container">
+                    <div class="pod" onclick="notify('Pod-01')">H-P1</div>
+                    <div class="pod" onclick="notify('Pod-02')">H-P2</div>
+                    <div class="pod" onclick="notify('Pod-03')">H-P3</div>
+                    <div class="pod" onclick="notify('Pod-04')">H-P4</div>
+                    <div class="pod" onclick="notify('Pod-05')">H-P5</div>
+                </div>
+                
+                <h1 style="margin-top: 2rem;">Traffic Flow</h1>
+                <div class="chart-container">
+                    <svg viewBox="0 0 400 100">
+                        <path d="M0,50 Q50,20 100,50 T200,50 T300,50 T400,50" />
+                    </svg>
+                </div>
+            </div>
+
+            <div class="card">
+                <h1>System Logs</h1>
+                <div class="log-stream" id="logs">
+                    [INFO] Syncing cluster...<br>
+                    [INFO] Pulling hari-app:latest...<br>
+                    [SUCCESS] Deployment complete.
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // Log simulator
+        const logs = document.getElementById('logs');
+        const messages = [
+            "[INFO] GET /api/v1/status 200",
+            "[WARN] Latency spike detected",
+            "[INFO] Memory allocation stable",
+            "[INFO] Pod H-P1 health check OK",
+            "[INFO] New session initialized"
+        ];
+
+        setInterval(() => {
+            const msg = document.createElement('div');
+            msg.innerHTML = messages[Math.floor(Math.random() * messages.length)];
+            logs.appendChild(msg);
+            if(logs.childNodes.length > 10) logs.removeChild(logs.firstChild);
+        }, 3000);
+
+        function notify(pod) {
+            alert(pod + " is responding correctly inside the K8s cluster!");
+        }
+    </script>
+</body>
+</html>
