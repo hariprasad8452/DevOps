@@ -4,8 +4,8 @@ pipeline {
     stages {
         stage('Build') {
             steps {
-                sh 'docker build -t YOUR_USER/portfolio-backend:latest ./backend'
-                sh 'docker build -t YOUR_USER/portfolio-frontend:latest ./frontend'
+                sh 'docker build -t hariprasad8452/portfolio-backend:latest ./backend'
+                sh 'docker build -t hariprasad8452/portfolio-frontend:latest ./frontend'
             }
         }
         stage('Push') {
@@ -13,8 +13,8 @@ pipeline {
                 // You must add 'docker-hub-creds' in Jenkins Credentials
                 withCredentials([usernamePassword(credentialsId: 'docker-hub-creds', passwordVariable: 'PASS', usernameVariable: 'USER')]) {
                     sh "docker login -u $USER -p $PASS"
-                    sh "docker push YOUR_USER/portfolio-backend:latest"
-                    sh "docker push YOUR_USER/portfolio-frontend:latest"
+                    sh "docker push hariprasad8452/portfolio-backend:latest"
+                    sh "docker push hariprasad8452/portfolio-frontend:latest"
                 }
             }
         }
