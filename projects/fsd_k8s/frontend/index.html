@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>K8s Portfolio App</title>
+    <style>
+        body { font-family: sans-serif; text-align: center; background: #f4f4f4; }
+        #status { color: green; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <h1>Full-Stack K8s Deployment</h1>
+    <div id="app">
+        <p>Backend Status: <span id="status">Loading...</span></p>
+    </div>
+
+    <script>
+        // Note: 'backend-service' is the name of our K8s Service
+        fetch('http://localhost:5000/api/data') 
+            .then(res => res.json())
+            .then(data => {
+                document.getElementById('status').innerText = data.message;
+            })
+            .catch(err => {
+                document.getElementById('status').innerText = "Error connecting to backend";
+                console.error(err);
+            });
+    </script>
+</body>
+</html>

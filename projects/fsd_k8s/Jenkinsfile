@@ -1,0 +1,29 @@
+pipeline {
+    agent any
+    
+    stages {
+        stage('Build') {
+            steps {
+                sh 'docker build -t YOUR_USER/portfolio-backend:latest ./backend'
+                sh 'docker build -t YOUR_USER/portfolio-frontend:latest ./frontend'
+            }
+        }
+        stage('Push') {
+            steps {
+                // You must add 'docker-hub-creds' in Jenkins Credentials
+                withCredentials([usernamePassword(credentialsId: 'docker-hub-creds', passwordVariable: 'PASS', usernameVariable: 'USER')]) {
+                    sh "docker login -u $USER -p $PASS"
+                    sh "docker push YOUR_USER/portfolio-backend:latest"
+                    sh "docker push YOUR_USER/portfolio-frontend:latest"
+                }
+            }
+        }
+        stage('Deploy to K8s') {
+            steps {
+                sh "kubectl apply -f k8s-spec.yaml"
+                sh "kubectl rollout restart deployment/backend-deploy"
+                sh "kubectl rollout restart deployment/frontend-deploy"
+            }
+        }
+    }
+}
