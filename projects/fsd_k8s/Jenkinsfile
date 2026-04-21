@@ -22,7 +22,8 @@ pipeline {
             steps {
                 withCredentials([file(credentialsId: 'k8s-config', variable: 'KUBECONFIG')]) {
                     sh "kubectl apply -f projects/fsd_k8s/k8s-spec.yaml"
-                    sh "kubectl get pods" 
+                    sh "kubectl rollout restart deployment/frontend-deploy"
+                    sh "kubectl rollout restart deployment/backend-deploy"
                 }
             }
         }
