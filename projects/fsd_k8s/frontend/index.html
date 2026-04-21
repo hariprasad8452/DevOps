@@ -1,28 +1,189 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>K8s Portfolio App</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Harry | K8s DevOps Portfolio</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
-        body { font-family: sans-serif; text-align: center; background: #f4f4f4; }
-        #status { color: green; font-weight: bold; }
+        :root {
+            --primary: #326ce5; /* Kubernetes Blue */
+            --accent: #00dfd8;
+            --bg: #0f172a;
+            --card-bg: rgba(255, 255, 255, 0.05);
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background: radial-gradient(circle at top right, #1e293b, #0f172a);
+            color: #f8fafc;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            overflow: hidden;
+        }
+
+        /* Animated Background Elements */
+        .blob {
+            position: absolute;
+            width: 300px;
+            height: 300px;
+            background: var(--primary);
+            filter: blur(80px);
+            border-radius: 50%;
+            z-index: -1;
+            opacity: 0.2;
+            animation: move 10s infinite alternate;
+        }
+
+        @keyframes move {
+            from { transform: translate(-10%, -10%); }
+            to { transform: translate(20%, 20%); }
+        }
+
+        .container {
+            width: 90%;
+            max-width: 500px;
+            perspective: 1000px;
+        }
+
+        .card {
+            background: var(--card-bg);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 24px;
+            padding: 40px;
+            text-align: center;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            transform: translateY(0);
+            transition: all 0.4s ease;
+            animation: fadeIn 0.8s ease-out;
+        }
+
+        .card:hover {
+            transform: translateY(-10px);
+            border-color: var(--primary);
+        }
+
+        .profile-icon {
+            font-size: 50px;
+            color: var(--primary);
+            margin-bottom: 20px;
+            filter: drop-shadow(0 0 10px var(--primary));
+        }
+
+        h1 {
+            margin: 0;
+            font-size: 2rem;
+            letter-spacing: -1px;
+        }
+
+        .subtitle {
+            color: #94a3b8;
+            font-size: 0.9rem;
+            margin-bottom: 30px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .status-box {
+            background: rgba(0, 0, 0, 0.2);
+            padding: 20px;
+            border-radius: 16px;
+            border-left: 4px solid #f59e0b; /* Warning color initially */
+            transition: border-color 0.5s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+        }
+
+        .status-box.connected {
+            border-left-color: #10b981; /* Success green */
+        }
+
+        #status {
+            font-weight: 600;
+            color: #f1f5f9;
+        }
+
+        .pulse {
+            width: 10px;
+            height: 10px;
+            background: #f59e0b;
+            border-radius: 50%;
+            box-shadow: 0 0 0 rgba(245, 158, 11, 0.4);
+            animation: pulse-red 2s infinite;
+        }
+
+        .connected .pulse {
+            background: #10b981;
+            animation: pulse-green 2s infinite;
+        }
+
+        @keyframes pulse-green {
+            0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
+            70% { box-shadow: 0 0 0 10px rgba(16, 185, 129, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.9); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        .k8s-badge {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 6px 15px;
+            background: rgba(50, 108, 229, 0.2);
+            color: var(--primary);
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: bold;
+        }
     </style>
 </head>
 <body>
-    <h1>Full-Stack K8s Deployment</h1>
-    <div id="app">
-        <p>Backend Status: <span id="status">Loading...</span></p>
+
+    <div class="blob"></div>
+
+    <div class="container">
+        <div class="card">
+            <div class="profile-icon">
+                <i class="fas fa-dharmachakra"></i>
+            </div>
+            <h1>Harry</h1>
+            <div class="subtitle">DevOps Engineer</div>
+            
+            <div class="status-box" id="status-container">
+                <div class="pulse" id="dot"></div>
+                <span id="status">K8S Backend: Connecting...</span>
+            </div>
+
+            <div class="k8s-badge">
+                <i class="fas fa-server"></i> K8S DEPLOYMENT ACTIVE
+            </div>
+        </div>
     </div>
 
     <script>
-        // Note: 'backend-service' is the name of our K8s Service
+        const statusText = document.getElementById('status');
+        const statusContainer = document.getElementById('status-container');
+
+        // Logic for Kubernetes Service Fetch
         fetch('http://localhost:5000/api/data') 
             .then(res => res.json())
             .then(data => {
-                document.getElementById('status').innerText = data.message;
+                statusText.innerText = "Backend: " + data.message;
+                statusContainer.classList.add('connected');
             })
             .catch(err => {
-                document.getElementById('status').innerText = "Error connecting to backend";
-                console.error(err);
+                statusText.innerText = "Backend Offline";
+                console.error("K8s Service Error:", err);
             });
     </script>
 </body>
