@@ -3,219 +3,241 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Harry | K8s DevOps Command Center</title>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <title>Harry | K8s Systems Architect</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <style>
         :root {
-            --primary: #326ce5;
-            --terminal-bg: #111827;
-            --text-main: #e2e8f0;
-            --accent: #10b981;
+            --primary: #00d2ff;
+            --secondary: #3a7bd5;
+            --bg-dark: #05070a;
+            --terminal-bg: rgba(13, 17, 23, 0.95);
+            --success: #00ff9d;
+            --warning: #ffb86c;
         }
 
         body {
             margin: 0;
-            background: #0b0f1a;
-            color: var(--text-main);
-            font-family: 'Inter', system-ui, sans-serif;
+            background-color: var(--bg-dark);
+            background-image: 
+                radial-gradient(circle at 20% 30%, rgba(0, 210, 255, 0.05) 0%, transparent 40%),
+                radial-gradient(circle at 80% 70%, rgba(58, 123, 213, 0.05) 0%, transparent 40%);
+            color: #e6edf3;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
             display: flex;
             justify-content: center;
             align-items: center;
-            min-height: 100vh;
+            height: 100vh;
             overflow: hidden;
         }
 
-        /* Layout Grid */
-        .dashboard {
+        .main-frame {
             display: grid;
-            grid-template-columns: 1fr 1.5fr;
+            grid-template-columns: 350px 1fr;
             width: 95vw;
-            height: 85vh;
+            height: 90vh;
             gap: 20px;
-            max-width: 1200px;
+            max-width: 1400px;
         }
 
-        /* Profile Side */
-        .profile-side {
+        /* Sidebar Styling */
+        .sidebar {
             background: rgba(255, 255, 255, 0.03);
             border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 20px;
-            padding: 40px;
+            border-radius: 24px;
+            backdrop-filter: blur(20px);
+            padding: 30px;
             display: flex;
             flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            backdrop-filter: blur(10px);
-            text-align: center;
+            gap: 25px;
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.8);
         }
 
-        .k8s-logo {
-            font-size: 80px;
-            color: var(--primary);
-            margin-bottom: 20px;
-            filter: drop-shadow(0 0 15px rgba(50, 108, 229, 0.4));
-            animation: float 6s ease-in-out infinite;
+        .identity { text-align: center; }
+        .k8s-core {
+            font-size: 60px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            filter: drop-shadow(0 0 10px rgba(0, 210, 255, 0.3));
+            animation: pulse 4s ease-in-out infinite;
         }
 
-        @keyframes float {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-20px); }
-        }
+        @keyframes pulse { 0%, 100% { transform: scale(1); opacity: 0.8; } 50% { transform: scale(1.05); opacity: 1; } }
 
-        .name-tag h1 { font-size: 2.5rem; margin: 0; color: #fff; letter-spacing: 2px; }
-        .name-tag p { color: var(--primary); font-weight: bold; letter-spacing: 4px; margin-top: 5px; font-size: 0.8rem; }
+        .name { font-size: 2.2rem; font-weight: 800; letter-spacing: -1px; margin: 10px 0 5px; }
+        .role { font-size: 0.75rem; color: var(--primary); text-transform: uppercase; letter-spacing: 3px; font-weight: bold; }
 
-        /* Terminal Side */
-        .terminal-side {
+        /* Metric Bars */
+        .metrics { margin-top: 20px; }
+        .metric-item { margin-bottom: 15px; }
+        .metric-label { font-size: 0.7rem; color: #8b949e; display: flex; justify-content: space-between; margin-bottom: 5px; }
+        .bar-bg { background: rgba(255,255,255,0.1); height: 6px; border-radius: 10px; overflow: hidden; }
+        .bar-fill { height: 100%; background: var(--primary); width: 0%; transition: width 2s cubic-bezier(0.1, 0, 0.3, 1); }
+
+        /* Terminal Window */
+        .terminal-container {
             background: var(--terminal-bg);
-            border-radius: 12px;
-            border: 1px solid #334155;
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
             display: flex;
             flex-direction: column;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
             overflow: hidden;
+            box-shadow: 0 20px 80px rgba(0,0,0,0.6);
         }
 
-        .terminal-header {
-            background: #1f2937;
-            padding: 12px 15px;
+        .terminal-nav {
+            background: #161b22;
+            padding: 12px 20px;
             display: flex;
+            justify-content: space-between;
             align-items: center;
-            gap: 8px;
-            border-bottom: 1px solid #334155;
+            border-bottom: 1px solid #30363d;
         }
 
+        .nav-dots { display: flex; gap: 8px; }
         .dot { width: 12px; height: 12px; border-radius: 50%; }
-        .red { background: #ff5f56; }
-        .yellow { background: #ffbd2e; }
-        .green { background: #27c93f; }
-
-        .terminal-body {
-            padding: 20px;
-            font-family: 'Fira Code', 'Courier New', monospace;
-            font-size: 0.85rem;
-            line-height: 1.6;
+        
+        .terminal-screen {
+            flex: 1;
+            padding: 25px;
+            font-family: 'Fira Code', 'Cascadia Code', monospace;
+            font-size: 0.9rem;
+            line-height: 1.5;
             overflow-y: auto;
-            flex-grow: 1;
-            color: #94a3b8;
-            background: linear-gradient(180deg, rgba(17, 24, 39, 0) 0%, rgba(0, 0, 0, 0.2) 100%);
+            color: #d1d5db;
         }
 
-        .log-entry { margin-bottom: 6px; animation: slideIn 0.3s ease-out; }
-        .log-success { color: var(--accent); }
-        .log-info { color: var(--primary); }
-        .log-warn { color: #f59e0b; }
+        .ln { color: #484f58; margin-right: 15px; user-select: none; }
+        .tag { color: var(--secondary); font-weight: bold; }
+        .val { color: var(--success); }
+        .err { color: #ff7b72; font-weight: bold; }
 
-        @keyframes slideIn {
-            from { opacity: 0; transform: translateX(-10px); }
-            to { opacity: 1; transform: translateX(0); }
-        }
-
-        /* Status Card */
-        .status-card {
-            margin-top: 30px;
-            padding: 20px;
-            background: rgba(0,0,0,0.4);
+        /* Status Pill */
+        .status-pill {
+            padding: 12px;
             border-radius: 12px;
-            border: 1px solid rgba(50, 108, 229, 0.3);
-            width: 100%;
-            box-sizing: border-box;
-        }
-
-        .status-indicator {
+            background: rgba(0,0,0,0.3);
+            border: 1px solid rgba(255, 255, 255, 0.05);
             display: flex;
             align-items: center;
-            justify-content: center;
-            gap: 10px;
-            font-weight: 600;
+            gap: 12px;
         }
 
-        @media (max-width: 900px) {
-            .dashboard { grid-template-columns: 1fr; overflow-y: auto; height: auto; padding: 20px; }
-            .terminal-side { min-height: 400px; }
+        .live-dot {
+            width: 8px; height: 8px; border-radius: 50%;
+            background: #ff7b72;
+            box-shadow: 0 0 10px #ff7b72;
+        }
+
+        .connected .live-dot { background: var(--success); box-shadow: 0 0 10px var(--success); }
+
+        @media (max-width: 1000px) {
+            .main-frame { grid-template-columns: 1fr; overflow-y: auto; height: auto; padding: 20px; }
+            .sidebar { height: auto; }
         }
     </style>
 </head>
 <body>
 
-    <div class="dashboard">
-        <div class="profile-side">
-            <div class="k8s-logo"><i class="fas fa-dharmachakra"></i></div>
-            <div class="name-tag">
-                <h1>HARRY</h1>
-                <p>DEVOPS ENGINEER</p>
+    <div class="main-frame">
+        <div class="sidebar">
+            <div class="identity">
+                <i class="fas fa-dharmachakra k8s-core"></i>
+                <div class="name">HARRY</div>
+                <div class="role">K8s Devops Deployment</div>
+            </div>
+
+            <div class="status-pill" id="status-pill">
+                <div class="live-dot"></div>
+                <span id="conn-text" style="font-size: 0.8rem; font-weight: 500;">Searching Port 5000...</span>
+            </div>
+
+            <div class="metrics">
+                <div class="metric-item">
+                    <div class="metric-label"><span>CPU USAGE</span><span id="cpu-val">0%</span></div>
+                    <div class="bar-bg"><div class="bar-fill" id="cpu-bar"></div></div>
+                </div>
+                <div class="metric-item">
+                    <div class="metric-label"><span>MEMORY</span><span id="mem-val">0%</span></div>
+                    <div class="bar-bg"><div class="bar-fill" id="mem-bar" style="background: var(--secondary);"></div></div>
+                </div>
             </div>
             
-            <div class="status-card">
-                <div style="font-size: 0.65rem; color: #64748b; margin-bottom: 8px; text-transform: uppercase;">Cluster Health</div>
-                <div id="backend-label" class="status-indicator">
-                    <i class="fas fa-circle-notch fa-spin"></i> 
-                    <span>Establishing Connection...</span>
-                </div>
+            <div style="margin-top: auto; font-size: 0.65rem; color: #484f58; line-height: 1.4;">
+                <i class="fas fa-shield-alt"></i> SECURED K8S NODE<br>
+                <i class="fas fa-code-branch"></i> BRANCH: MAIN/PRODUCTION
             </div>
         </div>
 
-        <div class="terminal-side">
-            <div class="terminal-header">
-                <div class="dot red"></div>
-                <div class="dot yellow"></div>
-                <div class="dot green"></div>
-                <span style="margin-left: 10px; font-size: 0.7rem; color: #94a3b8; font-family: monospace;">kubectl logs -f harry-deployment</span>
+        <div class="terminal-container">
+            <div class="terminal-nav">
+                <div class="nav-dots">
+                    <div class="dot" style="background: #ff5f56;"></div>
+                    <div class="dot" style="background: #ffbd2e;"></div>
+                    <div class="dot" style="background: #27c93f;"></div>
+                </div>
+                <div style="font-size: 0.7rem; color: #8b949e; letter-spacing: 1px;">harry@k8s-cluster: ~/deployment</div>
+                <i class="fas fa-terminal" style="color: #8b949e; font-size: 0.8rem;"></i>
             </div>
-            <div class="terminal-body" id="terminal-content">
+            <div class="terminal-screen" id="terminal">
                 </div>
         </div>
     </div>
 
     <script>
-        const terminal = document.getElementById('terminal-content');
-        const backendLabel = document.getElementById('backend-label');
+        const terminal = document.getElementById('terminal');
+        let lineCount = 1;
 
-        function addLog(msg, type = 'info') {
+        function print(text, type = 'info') {
             const div = document.createElement('div');
-            const timestamp = new Date().toLocaleTimeString('en-US', { hour12: false });
-            div.className = `log-entry log-${type}`;
-            div.innerHTML = `<span style="color:#475569">[${timestamp}]</span> <span style="color:#326ce5">➜</span> ${msg}`;
+            let content = `<span class="ln">${String(lineCount++).padStart(2, '0')}</span>`;
+            
+            if(type === 'cmd') content += `<span class="tag">guest@harry:~$</span> ${text}`;
+            else if(type === 'success') content += `<span class="val">✔ ${text}</span>`;
+            else if(type === 'error') content += `<span class="err">✘ ${text}</span>`;
+            else content += `<span>${text}</span>`;
+
+            div.innerHTML = content;
             terminal.appendChild(div);
             terminal.scrollTop = terminal.scrollHeight;
         }
 
-        // Automated K8s Boot Sequence
-        const sequence = [
-            { m: "Initializing Kubernetes control plane...", t: "info", d: 500 },
-            { m: "Scanning namespace: production", t: "info", d: 1200 },
-            { m: "Scaling replica set to 3...", t: "info", d: 2000 },
-            { m: "Pod 'harry-app-7d6f' state: Running", t: "success", d: 3000 },
-            { m: "Exposing Service on port 5000", t: "info", d: 4000 }
-        ];
+        // Initialize UI
+        setTimeout(() => {
+            print("kubectl apply -f harry-deployment.yaml", "cmd");
+            document.getElementById('cpu-bar').style.width = '42%';
+            document.getElementById('cpu-val').innerText = '42%';
+            document.getElementById('mem-bar').style.width = '68%';
+            document.getElementById('mem-val').innerText = '68%';
+        }, 800);
 
-        sequence.forEach(step => {
-            setTimeout(() => addLog(step.m, step.t), step.d);
-        });
+        setTimeout(() => print("Deployment 'harry-v1' created", "success"), 1500);
+        setTimeout(() => print("Scaling pods to 3 replicas...", "info"), 2200);
 
-        // Real Backend Fetch (Port 5000)
+        // API Fetch (Your Port 5000)
         fetch('http://localhost:5000/api/data')
             .then(res => res.json())
             .then(data => {
-                backendLabel.innerHTML = `<i class="fas fa-check-circle" style="color:var(--accent)"></i> <span>${data.message}</span>`;
-                addLog(`Inbound traffic routed to Harry's Node`, "success");
+                document.getElementById('status-pill').classList.add('connected');
+                document.getElementById('conn-text').innerText = data.message;
+                print(`Traffic successfully routed to port 5000`, "success");
             })
             .catch(err => {
-                backendLabel.innerHTML = `<i class="fas fa-times-circle" style="color:#ff5f56"></i> <span>Backend Offline</span>`;
-                addLog("CRITICAL: Connection refused on port 5000", "warn");
+                document.getElementById('conn-text').innerText = "Port 5000: No Response";
+                print("Failed to reach service at localhost:5000", "error");
             });
 
-        // Live "Traffic" Simulation
+        // Loop random logs
+        const logs = ["Heartbeat sent to Control Plane", "ReplicaSet is healthy", "Pulling harry-image:latest...", "Pod re-scheduled on Node-3"];
         setInterval(() => {
-            const events = [
-                "GET /api/v1/health - 200 OK",
-                "Internal backup synced to S3",
-                "Node-02 resource usage: 42% CPU",
-                "Heartbeat signal sent to master"
-            ];
-            const event = events[Math.floor(Math.random() * events.length)];
-            addLog(event, "info");
-        }, 6000);
+            const log = logs[Math.floor(Math.random() * logs.length)];
+            print(log, "info");
+            
+            // Randomize metrics slightly
+            const cpu = Math.floor(Math.random() * (60 - 30) + 30);
+            document.getElementById('cpu-bar').style.width = cpu + '%';
+            document.getElementById('cpu-val').innerText = cpu + '%';
+        }, 4000);
     </script>
 </body>
 </html>
