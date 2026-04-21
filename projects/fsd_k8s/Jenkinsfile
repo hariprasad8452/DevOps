@@ -21,7 +21,7 @@ pipeline {
         stage('Deploy to K8s') {
             steps {
                 withCredentials([file(credentialsId: 'k8s-config', variable: 'KUBECONFIG')]) {
-                    sh "kubectl apply -f k8s-spec.yaml"
+                    sh "kubectl apply -f projects/fsd_k8s/k8s-spec.yaml"
                     sh "kubectl get pods" 
                 }
             }
