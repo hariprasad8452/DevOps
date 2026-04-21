@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
       - name: backend-container
-        image: YOUR_DOCKERHUB_USER/portfolio-backend:latest
+        image: hariprasad8452/portfolio-backend:latest
         ports:
         - containerPort: 5000
 ---
@@ -48,7 +48,7 @@ spec:
     spec:
       containers:
       - name: frontend-container
-        image: YOUR_DOCKERHUB_USER/portfolio-frontend:latest
+        image: hariprasad8452/portfolio-frontend:latest
         ports:
         - containerPort: 80
 ---
